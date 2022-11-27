@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
+  "scripts": {
+    "link": "node ./language/misc/link.js --path"
+  },
+  "license": "MIT"
+}

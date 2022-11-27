@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Write hyper light programms direcrtly in the browser"
+    />
+    <title>Chip</title>
+    <link href="./style.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.svg" />
+    <style>
+      .header-encoder {
+        bottom: 50px;
+        right: 0px;
+        height: 50px;
+        gap: 10px;
+        border: none;
+        width: 70px;
+        display: grid;
+        background-color: transparent;
+        position: fixed;
+        z-index: 1500;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="console" class="console"></p>
+    <div id="comments-section" class="comments-section"></div>
+    <div id="header" class="header-encoder">
+      <button
+        id="compress"
+        aria-label="compress"
+        title="To compression"
+        class="header-button svgIcon"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          version="1.1"
+          width="18"
+          height="18"
+          viewBox="0 0 30 70"
+          style="overflow: hidden; background: transparent"
+        >
+          <defs></defs>
+          <g id="two-0" transform="matrix(1 0 0 1 0 0)" opacity="1">
+            <path
+              transform="matrix(1 0 0 1 5 15)"
+              id="two-1"
+              d="M -5 -15 L 5 -15 L 5 15 L -5 15 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 30 22.5)"
+              id="two-2"
+              d="M -5 -12.5 L 5 -12.5 L 5 12.5 L -5 12.5 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 12.5 5)"
+              id="two-3"
+              d="M -12.5 -5 L 12.5 -5 L 12.5 5 L -12.5 5 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 15 30)"
+              id="two-4"
+              d="M -15 -5 L 15 -5 L 15 5 L -15 5 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 15 45)"
+              id="two-5"
+              d="M -5 -20 L 5 -20 L 5 20 L -5 20 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 19 51)"
+              id="two-6"
+              d="M -9 -4 L 9 -4 L 9 4 L -9 4 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+            <path
+              transform="matrix(1 0 0 1 21 66)"
+              id="two-7"
+              d="M -11 -4 L 11 -4 L 11 4 L -11 4 Z "
+              stroke="undefined"
+              stroke-width="1"
+              stroke-opacity="1"
+              fill-opacity="1"
+              visibility="visible"
+              stroke-linecap="butt"
+              stroke-linejoin="miter"
+              stroke-miterlimit="4"
+            ></path>
+          </g>
+        </svg>
+      </button>
+      <button id="decompress" title="Decompress" class="header-button svgIcon">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          version="1.1"
+          width="18"
+          height="28"
+          viewBox="0 0 40 50"
+          style="overflow: hidden; background: transparent; border: none"
+        >
+          <defs></defs>
+          <g id="two-8" transform="matrix(1 0 0 1 0 0)" opacity="1">
+            <g id="two-15" transform="matrix(1 0 0 1 0 0)" opacity="1">
+              <path
+                transform="matrix(1 0 0 1 20 25)"
+                id="two-9"
+                d="M -15 -20 L 15 -20 L 15 20 L -15 20 Z "
+                fill="transparent"
+                stroke-width="5"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+              <path
+                transform="matrix(1 0 0 1 17.5 11.5)"
+                id="two-10"
+                d="M -7.5 -1.5 L 7.5 -1.5 L 7.5 1.5 L -7.5 1.5 Z "
+                stroke="undefined"
+                stroke-width="1"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+              <path
+                transform="matrix(1 0 0 1 20 16.5)"
+                id="two-11"
+                d="M -10 -1.5 L 10 -1.5 L 10 1.5 L -10 1.5 Z "
+                stroke="undefined"
+                stroke-width="1"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+              <path
+                transform="matrix(1 0 0 1 20 21.5)"
+                id="two-12"
+                d="M -10 -1.5 L 10 -1.5 L 10 1.5 L -10 1.5 Z "
+                stroke="undefined"
+                stroke-width="1"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+              <path
+                transform="matrix(1 0 0 1 20 26.5)"
+                id="two-13"
+                d="M -10 -1.5 L 10 -1.5 L 10 1.5 L -10 1.5 Z "
+                stroke="undefined"
+                stroke-width="1"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+              <path
+                transform="matrix(1 0 0 1 15 36.5)"
+                id="two-14"
+                d="M -5 -1.5 L 5 -1.5 L 5 1.5 L -5 1.5 Z "
+                stroke="undefined"
+                stroke-width="1"
+                stroke-opacity="1"
+                fill-opacity="1"
+                visibility="visible"
+                stroke-linecap="butt"
+                stroke-linejoin="miter"
+                stroke-miterlimit="4"
+              ></path>
+            </g>
+          </g>
+        </svg>
+      </button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/lzutf8@0.6.3/build/production/lzutf8.min.js"></script>
+
+    <script
+      type="module"
+      src="./encoder.js
+    "
+    ></script>
+  </body>
+</html>
