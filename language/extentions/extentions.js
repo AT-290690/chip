@@ -23,6 +23,13 @@ export const LIBRARY = {
         .then(data => data.text())
         .then(callback),
   },
+  STORAGE: {
+    NAME: 'STORAGE',
+    setinstorage: (key, value) => sessionStorage.setItem(key, value),
+    getfromstorage: key => sessionStorage.getItem(key),
+    removefromstorage: key => sessionStorage.removeItem(key),
+    clearstorage: () => sessionStorage.clear(),
+  },
   DATE: {
     NAME: 'DATE',
     formattolocal: (date, format) => date.toLocaleDateString(format),
