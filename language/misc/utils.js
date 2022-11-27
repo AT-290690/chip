@@ -17,7 +17,7 @@ const _reduceLeft = (array, callback, out = []) => array.reduce(callback, out)
 const _reduceRight = (array, callback, out = []) => array.reduceRight(callback, out)
 const _findLeft = (array, callback) => array.find(callback)
 const _findRight = (array, callback) => array.findLast(callback)
-const _repeat = () => { let out; for (let i = 0; i < n; ++i) out = callback(); return out }
+const _repeat = (n, callback) => { let out; for (let i = 0; i < n; ++i) out = callback(); return out }
 const _every = (array, callback) => array.every(callback)
 const _some = (array, callback) => array.some(callback)
 const _dfs = (tree, callback) => { callback(tree['*']); for (const branch of tree['=>']) dfs(branch); return tree }
