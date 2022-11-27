@@ -9,7 +9,7 @@ export const protolessModule = methods => {
 export const LIBRARY = {
   NAME: 'LIBRARY',
   HTTP: {
-    name: 'HTTP',
+    NAME: 'HTTP',
     getrequestmanyjson: (callback, ...promises) =>
       Promise.all(promises).then(res =>
         Promise.all(res.map(r => r.json()).then(callback))
@@ -17,6 +17,10 @@ export const LIBRARY = {
     getrequestsinglejson: (url, callback) =>
       fetch(url)
         .then(data => data.json())
+        .then(callback),
+    getrequestsingletext: (url, callback) =>
+      fetch(url)
+        .then(data => data.text())
         .then(callback),
   },
   DATE: {
