@@ -134,10 +134,7 @@ export const HyperLightEditor = (
   elements.openAppButton.addEventListener('click', openAppWindow)
   elements.key.addEventListener('click', () => {
     const encoded = encodeURIComponent(encodeBase64(editor.getValue()))
-    // const link = location.href.includes('https://at-290690.github.io/hyper-light')
-    // ? 'https://at-290690.github.io/hyper-light/preview.html?s='
-    // : 'http://127.0.0.1:8080/preview.html?s='
-    const link = 'https://at-290690.github.io/hyper-light/preview.html?s='
+    const link = 'https://at-290690.github.io/chip/preview.html?s='
     if (encoded) window.open(link + encoded, '_blank').focus()
   })
   window.addEventListener('resize', () => {
