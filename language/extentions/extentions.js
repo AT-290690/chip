@@ -623,6 +623,14 @@ export const LIBRARY = {
       element.appendChild(content)
       return element
     },
+    makecsslink: href => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = href
+      link.crossorigin = 'anonymous'
+      document.head.appendChild(link)
+      return link
+    },
     makeorderedlist: (...lists) => {
       const element = document.createElement('ol')
       lists.forEach(l => element.appendChild(l))
@@ -839,19 +847,23 @@ export const LIBRARY = {
   EVENT: {
     NAME: 'EVENT',
     oninputchange: (element, callback) => {
-      element.addEventListener('change', callback)
+      element.addEventListener('change', e => callback(e.target))
       return element
     },
     onmouseclick: (element, callback) => {
-      element.addEventListener('click', callback)
+      element.addEventListener('click', e => callback(e.target))
+      return element
+    },
+    onmouseover: (element, callback) => {
+      element.addEventListener('mouseover', e => callback(e.target))
       return element
     },
     onkeydown: (element, callback) => {
-      element.addEventListener('keydown', callback)
+      element.addEventListener('keydown', e => callback(e.key))
       return element
     },
     onkeyup: (element, callback) => {
-      element.addEventListener('keyup', callback)
+      element.addEventListener('keyup', e => callback(e.key))
       return element
     },
   },
