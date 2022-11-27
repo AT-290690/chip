@@ -512,10 +512,8 @@ export const LIBRARY = {
       }
       return element
     },
-    makeinput: (width = '100px', height = '100px', settings) => {
+    makeinput: settings => {
       const element = document.createElement('input')
-      element.width = width
-      element.height = height
       for (const setting in settings) {
         element.setAttribute(setting, settings[setting])
       }
@@ -613,7 +611,7 @@ export const LIBRARY = {
       element.textContent = label
       return element
     },
-    makeheadertag: (content, n = 1) => {
+    makeheader: (content, n = 1) => {
       const element = document.createElement('h' + n)
       element.textContent = content
       return element
