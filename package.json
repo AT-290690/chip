@@ -6,7 +6,11 @@
     "arrowParens": "avoid"
   },
   "scripts": {
-    "link": "node ./language/misc/link.js --path"
+    "link": "node ./language/misc/link.js --path",
+    "test": "mocha"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "mocha": "^10.1.0"
+  }
 }

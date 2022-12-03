@@ -6,12 +6,11 @@ import { removeNoCode, wrapInBody } from './helpers.js'
 
 export const languageUtilsString = `const _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result };
 const _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
-const _node = (...args) => { const [val, ...rest] = args; return { '*': val, '=>': rest ? rest.map(args => _node(args)) : VOID }}
 const _spread = (items) => Array.isArray(items[0]) ? items.reduce((acc, item) => [...acc, ...item], []) : items.reduce((acc, item) => ({ ...acc, ...item }), {});
-const _scanLeft = (array, callback) => { for (let i = 0; i < array.length; ++i) callback(array[i], i) ;return array } 
-const _scanRight = (array, callback) => {  for (let i = array.length - 1; i >= 0; --i) callback(array[i], i) ;return array }
-const _mapLeft = (array, callback, copy = []) => { for (let i = 0; i < array.length; ++i) copy[i] = callback(array[i], i) ;return array } 
-const _mapRight = (array, callback, copy = []) => {  for (let i = array.length - 1; i >= 0; --i) copy[i] = callback(array[i], i) ;return array }
+const _scanLeft = (array, callback) => { for (let i = 0; i < array.length; ++i) callback(array[i], i, array); return array } 
+const _scanRight = (array, callback) => {  for (let i = array.length - 1; i >= 0; --i) callback(array[i], i, array); return array }
+const _mapLeft = (array, callback, copy = []) => { for (let i = 0; i < array.length; ++i) copy[i] = callback(array[i], i, array); return array } 
+const _mapRight = (array, callback, copy = []) => {  for (let i = array.length - 1; i >= 0; --i) copy[i] = callback(array[i], i, array); return array }
 const _filter = (array, callback) => array.filter(callback) 
 const _reduceLeft = (array, callback, out = []) => array.reduce(callback, out)
 const _reduceRight = (array, callback, out = []) => array.reduceRight(callback, out)
@@ -20,10 +19,11 @@ const _findRight = (array, callback) => array.findLast(callback)
 const _repeat = (n, callback) => { let out; for (let i = 0; i < n; ++i) out = callback(); return out }
 const _every = (array, callback) => array.every(callback)
 const _some = (array, callback) => array.some(callback)
-const _dfs = (tree, callback) => { callback(tree['*']); for (const branch of tree['=>']) dfs(branch); return tree }
-const _push = (array, value) => { array.push(value); return array };
-const _pop = (array) => { array.pop(); return array };
-const _split = (string, separator) => string.split(separator);
+const _push = (array, value) => { array.push(value); return array }
+const _pop = (array) => { array.pop(); return array }
+const _length = (array) => array.length
+const _split = (string, separator) => string.split(separator)
+const _at = (array, index) => array.at(index)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
@@ -49,7 +49,8 @@ const findParent = ast => {
   return out
 }
 
-export const runFromText = source => run(removeNoCode(source))
+export const runFromInterpreted = source => run(removeNoCode(source))
+export const runFromCompiled = source => eval(compileModule(source))
 
 export const exe = source => {
   const ENV = protolessModule(STD)
@@ -88,8 +89,6 @@ export const run = source => {
   return exe(sourceCode)
 }
 
-export const dashCommentsToSemiComments = source =>
-  source.replaceAll('//', ';;')
 export const handleHangingSemi = source => {
   const code = source.trim()
   return code[code.length - 1] === ';' ? code : code + ';'
@@ -130,7 +129,7 @@ export const compileModule = source => {
   const lib = treeShake(modules)
   return `const VOID = null;
 ${languageUtilsString}
-${lib}
+${lib};
 ${body}`
 }
 

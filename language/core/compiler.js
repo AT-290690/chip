@@ -50,11 +50,12 @@ const dfs = (tree, locals) => {
         return '(' + tree.args.map(x => dfs(x, locals)).join('+') + ')'
       case '==':
         return '(' + tree.args.map(x => dfs(x, locals)).join('===') + ')'
+      case '!=':
+        return '(' + tree.args.map(x => dfs(x, locals)).join('!==') + ')'
       case '+':
       case '-':
       case '*':
       case ':':
-      case '!=':
       case '>=':
       case '<=':
       case '>':
@@ -129,19 +130,10 @@ const dfs = (tree, locals) => {
           tree.args[1],
           locals
         )})`
-      case '>>=':
-        return `_dfs(${dfs(tree.args[0], locals)}, ${dfs(
-          tree.args[1],
-          locals
-        )})`
-      case '.*':
-        return `${dfs(tree.args[0], locals)}['*']`
-      case '.=>':
-        return `${dfs(tree.args[0], locals)}['=>']`
       case '.>':
-        return `${dfs(tree.args[0], locals)}.at(0)`
+        return `_at(${dfs(tree.args[0], locals)}, 0);`
       case '.<':
-        return `${dfs(tree.args[0], locals)}.at(-1)`
+        return `_at(${dfs(tree.args[0], locals)}, -1);`
       // case '</>':
       //   return `document.createElement(${dfs(tree.args[0], locals)})`
       case '.:':
@@ -150,16 +142,15 @@ const dfs = (tree, locals) => {
         return `_push(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
-        )})`
+        )});`
       case '.:!=':
-        return `_pop(${dfs(tree.args[0], locals)})`
+        return `_pop(${dfs(tree.args[0], locals)});`
       case './:':
-        return `_split(${dfs(tree.args[0], locals)}, ${dfs(
-          tree.args[1],
-          locals
-        )})`
+        return `_split(${dfs(tree.args[0], locals)}, ${
+          tree.args[1] ? dfs(tree.args[1], locals) : '""'
+        });`
       case '.:?':
-        return `${dfs(tree.args[0], locals)}.length`
+        return `_length(${dfs(tree.args[0], locals)});`
       case '::':
         return (
           '{' +
@@ -176,17 +167,13 @@ const dfs = (tree, locals) => {
           '}'
         )
       case 'tco': {
-        return '_tco(' + dfs(tree.args[0], locals) + ')'
+        return '_tco(' + dfs(tree.args[0], locals) + ');'
       }
       case '...':
-        return `_spread([${tree.args.map(x => dfs(x, locals)).join(',')}])`
+        return `_spread([${tree.args.map(x => dfs(x, locals)).join(',')}]);`
       case '|>': {
         const [param, ...rest] = tree.args.map(x => dfs(x, locals))
         return `_pipe(${rest.join(',')})(${param});`
-      }
-      case '=>': {
-        const args = tree.args.map(x => dfs(x, locals))
-        return `_node(${args.join(',')});`
       }
       case '>>': {
         const [array, callback] = tree.args.map(x => dfs(x, locals))
@@ -228,7 +215,7 @@ const dfs = (tree, locals) => {
         }
         return `${dfs(tree.args[0], locals)}${prop
           .map(x => '[' + x + ']')
-          .join('')};`
+          .join('')}`
       }
       case '.!=': {
         const prop = []
@@ -322,7 +309,9 @@ const dfs = (tree, locals) => {
               ? `${caller}["${method.value}"](${arg.join(',')});`
               : `${caller}[${dfs(method, locals)}](${arg.join(',')});`
           } else {
-            return `(${dfs(tree.operator, locals)})()`
+            return `(${dfs(tree.operator, locals)})(${tree.args
+              .map(x => dfs(x, locals))
+              .join(',')})`
           }
         }
       }

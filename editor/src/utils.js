@@ -1,6 +1,5 @@
 import {
   compileHtml,
-  dashCommentsToSemiComments,
   handleUnbalancedParens,
   interpredHtml,
   run,
@@ -27,7 +26,7 @@ export const interpred = (file, logErrorMessage) => {
 export const interpredBrowser = (file, to, logErrorMessage) => {
   try {
     handleUnbalancedParens(file)
-    return interpredHtml(dashCommentsToSemiComments(file))
+    return interpredHtml(file)
   } catch (err) {
     logErrorMessage(err.message)
   }

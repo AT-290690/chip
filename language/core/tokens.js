@@ -278,18 +278,6 @@ const tokens = {
       copy[i] = callback(array[i], i, array)
     return copy
   },
-  ['>>=']: (args, env) => {
-    if (args.length !== 2)
-      throw new TypeError('Invalid number of arguments to >=>')
-    const tree = evaluate(args[0], env)
-    if (typeof tree !== 'object' && !('*' in tree) && !('=>' in tree))
-      throw new TypeError('First argument of >=> must be a list')
-    const callback = evaluate(args[1], env)
-    if (typeof callback !== 'function')
-      throw new TypeError('Second argument of >=> must be an -> []')
-    dfs(tree)
-    return tree
-  },
   ['@']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to @')
@@ -495,29 +483,6 @@ const tokens = {
           ),
         }
   },
-  ['=>']: (args, env) => {
-    const [val, ...rest] = args
-    return {
-      '*': extract(val, env),
-      '=>': rest ? rest.map(x => tokens['=>'](x.args, env)) : VOID,
-    }
-  },
-  ['.*']: (args, env) => {
-    if (args.length !== 1)
-      throw new TypeError('Invalid number of arguments to .*')
-    const tree = evaluate(args[0], env)
-    if (typeof tree !== 'object' && !('*' in tree) && !('=>' in tree))
-      throw new TypeError('Argument of .* must be a list')
-    return tree['*']
-  },
-  ['.=>']: (args, env) => {
-    if (args.length !== 1)
-      throw new TypeError('Invalid number of arguments to .=>')
-    const tree = evaluate(args[0], env)
-    if (typeof tree !== 'object' && !('*' in tree) && !('=>' in tree))
-      throw new TypeError('Argument of .=> must be a list')
-    return tree['=>']
-  },
   ['.:=']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to .:=')
@@ -580,13 +545,13 @@ const tokens = {
     )
   },
   ['./:']: (args, env) => {
-    if (args.length !== 2)
+    if (args.length === 0 || args.length > 2)
       throw new TypeError('Invalid number of arguments to ./:')
     const string = evaluate(args[0], env)
     if (typeof string !== 'string')
       throw new TypeError('First argument of ./: must be an ""')
-    const separator = evaluate(args[1], env)
-    if (typeof separator !== 'string')
+    const separator = args[1] ? evaluate(args[1], env) : ''
+    if (args[1] && typeof separator !== 'string')
       throw new TypeError('Second argument of ./: must be an ""')
     return string.split(separator)
   },
