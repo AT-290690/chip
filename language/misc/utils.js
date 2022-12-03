@@ -156,7 +156,7 @@ export const compileHtml = (source, scripts = '') => {
   const { body, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
   return `
-<style>body { background: black } </style><body>
+<style>body { background: #0e0e0e } </style><body>
 ${scripts}
 <script>
 const VOID = null;

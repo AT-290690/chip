@@ -17,8 +17,8 @@
   --color-fourtly: #75ff91;
   --color-fiftly: #2eff85;
 
-  --background-primary: #000000;
-  --background-thirdly: #000000;
+  --background-primary: #0e0e0e;
+  --background-thirdly: #0e0e0e;
   --background-secondary: #7895ff58;
 
   --gutters-border: 1px solid transparent;
@@ -48,7 +48,7 @@
   --drone3: pink;
   --drone4: #2a2c2e;
   --font-primary: 'Fantastic';
-  --hover: #fff84c;
+  --hover: #2eff85;
   --atom: #e24488;
 }
 @font-face {

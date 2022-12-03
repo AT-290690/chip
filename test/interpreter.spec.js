@@ -151,11 +151,11 @@ describe('interpretation should work as expected', () => {
     equal(runFromInterpreted(`. ["01010"; "length"];`), 5)
   })
 
-  it('* import should work', () => {
+  it('import should work', () => {
     deepEqual(
       runFromInterpreted(`<- ["MATH"; "ARRAY"] [LIBRARY];
-      <- ["*"] [ARRAY];
-      <- ["*"] [MATH];
+      <- ["map"] [ARRAY];
+      <- ["floor"] [MATH];
       map [.: [1.123; 3.14; 4.9]; floor];
       `),
       [1, 3, 4]
