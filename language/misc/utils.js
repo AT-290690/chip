@@ -23,6 +23,7 @@ const _some = (array, callback) => array.some(callback)
 const _dfs = (tree, callback) => { callback(tree['*']); for (const branch of tree['=>']) dfs(branch); return tree }
 const _push = (array, value) => { array.push(value); return array };
 const _pop = (array) => { array.pop(); return array };
+const _split = (string, separator) => string.split(separator);
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`

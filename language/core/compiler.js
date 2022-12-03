@@ -153,6 +153,13 @@ const dfs = (tree, locals) => {
         )})`
       case '.:!=':
         return `_pop(${dfs(tree.args[0], locals)})`
+      case './:':
+        return `_split(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )})`
+      case '.:?':
+        return `${dfs(tree.args[0], locals)}.length`
       case '::':
         return (
           '{' +

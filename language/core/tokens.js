@@ -579,6 +579,17 @@ const tokens = {
         : param.value
     )
   },
+  ['./:']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to ./:')
+    const string = evaluate(args[0], env)
+    if (typeof string !== 'string')
+      throw new TypeError('First argument of ./: must be an ""')
+    const separator = evaluate(args[1], env)
+    if (typeof separator !== 'string')
+      throw new TypeError('Second argument of ./: must be an ""')
+    return string.split(separator)
+  },
   ['#']: (args, env) => {
     if (!args.length) throw new SyntaxError('Invalid use of operation #')
     args.forEach(({ name, type }) => {
@@ -594,6 +605,14 @@ const tokens = {
     })
 
     return args[args.length - 1].name
+  },
+  ['.:?']: (args, env) => {
+    if (args.length !== 1)
+      throw new TypeError('Invalid number of arguments to .:?')
+    const array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError('First argument of .:? must be an .: []')
+    return array.length
   },
 }
 tokens['~='] = tokens[':=']
