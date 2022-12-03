@@ -111,12 +111,12 @@ const dfs = (tree, locals) => {
           locals
         )})`
       case '><>':
-        return `_findRight(${dfs(tree.args[0], locals)}, ${dfs(
+        return `_findLeft(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )})`
       case '<><':
-        return `_findLeft(${dfs(tree.args[0], locals)}, ${dfs(
+        return `_findRight(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )})`

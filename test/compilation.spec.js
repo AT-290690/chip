@@ -148,4 +148,21 @@ describe('compilation should work as expected', () => {
       `
     deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
   })
+
+  it('><> should work', () => {
+    const source = `><> [.: [1; 2; 3; 4]; -> [x; i; a; == [x; 2]]]`
+    equal(runFromInterpreted(source), runFromCompiled(source))
+  })
+  it('>>. and .<< should work', () => {
+    const source1 = `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
+    deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
+    // findLast doesn't exist in node still
+    // const source2 = `.<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
+    // deepEqual(runFromInterpreted(source2), runFromCompiled(source2))
+  })
+
+  it('@ should work', () => {
+    const source = `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`
+    deepEqual(runFromInterpreted(source), runFromCompiled(source))
+  })
 })

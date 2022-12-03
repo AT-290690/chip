@@ -9,8 +9,8 @@ const _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 const _spread = (items) => Array.isArray(items[0]) ? items.reduce((acc, item) => [...acc, ...item], []) : items.reduce((acc, item) => ({ ...acc, ...item }), {});
 const _scanLeft = (array, callback) => { for (let i = 0; i < array.length; ++i) callback(array[i], i, array); return array } 
 const _scanRight = (array, callback) => {  for (let i = array.length - 1; i >= 0; --i) callback(array[i], i, array); return array }
-const _mapLeft = (array, callback, copy = []) => { for (let i = 0; i < array.length; ++i) copy[i] = callback(array[i], i, array); return array } 
-const _mapRight = (array, callback, copy = []) => {  for (let i = array.length - 1; i >= 0; --i) copy[i] = callback(array[i], i, array); return array }
+const _mapLeft = (array, callback, copy = []) => { for (let i = 0; i < array.length; ++i) copy[i] = array[i] = callback(array[i], i, array); return array } 
+const _mapRight = (array, callback, copy = []) => {  for (let i = array.length - 1; i >= 0; --i) copy[i] = array[i] = callback(array[i], i, array); return array }
 const _filter = (array, callback) => array.filter(callback) 
 const _reduceLeft = (array, callback, out = []) => array.reduce(callback, out)
 const _reduceRight = (array, callback, out = []) => array.reduceRight(callback, out)

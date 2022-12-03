@@ -254,7 +254,7 @@ const tokens = {
   },
   ['<<']: (args, env) => {
     if (args.length !== 2)
-      throw new TypeError('Invalid number of arguments to .<<')
+      throw new TypeError('Invalid number of arguments to <<')
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError('First argument of << must be an .: []')
@@ -266,7 +266,7 @@ const tokens = {
   },
   ['.<<']: (args, env) => {
     if (args.length !== 2)
-      throw new TypeError('Invalid number of arguments to <<')
+      throw new TypeError('Invalid number of arguments to .<<')
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError('First argument of .<< must be an .: []')

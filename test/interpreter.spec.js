@@ -198,4 +198,32 @@ describe('interpretation should work as expected', () => {
       [10, 21, 32, 43]
     )
   })
+
+  it('><> should work', () => {
+    equal(
+      runFromInterpreted(`><> [.: [1; 2; 3; 4]; -> [x; i; a; == [x; 2]]]`),
+      2
+    )
+  })
+  it('>>. and .<< should work', () => {
+    deepEqual(
+      runFromInterpreted(
+        `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
+      ),
+      [2, 5, 8, 11]
+    )
+    deepEqual(
+      runFromInterpreted(
+        `.<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
+      ),
+      [2, 5, 8, 11]
+    )
+  })
+
+  it('@ should work', () => {
+    deepEqual(
+      runFromInterpreted(`:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`),
+      [1, 1, 1]
+    )
+  })
 })
