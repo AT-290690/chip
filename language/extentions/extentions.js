@@ -89,6 +89,16 @@ export const LIBRARY = {
     },
     size: obj => Object.keys(obj).length,
   },
+  BITWISE: {
+    NAME: 'BITWISE',
+    and: (a, b) => a & b,
+    not: a => ~a,
+    or: (a, b) => a | b,
+    xor: (a, b) => a ^ b,
+    leftshift: (a, b) => a << b,
+    rightshift: (a, b) => a >> b,
+    unrightshift: (a, b) => a >>> b,
+  },
   MATH: {
     NAME: 'MATH',
     lerp: (start, end, amt) => (1 - amt) * start + amt * end,
@@ -896,6 +906,26 @@ export const STD = {
   //   )
   // },
   call: (x, callback) => callback(x),
+  cast: (value, type) => {
+    if (type === '1') return Number(value)
+    else if (type === '') return String(value)
+    else if (value === null || value === undefined) return VOID
+    else if (type === '.:') {
+      if (Array.isArray(value)) return value
+      else if (typeof value === 'string') return [...value]
+      else if (typeof value === 'number') return [...String(value)].map(Number)
+      else if (typeof value === 'object') return Object.entries(value)
+    } else if (type === '::') {
+      if (typeof value === 'string' || Array.isArray(value)) return { ...value }
+      else if (typeof value === 'number') {
+        const out = { ...String(value) }
+        for (const key in out) {
+          out[key] = Number(out[key])
+        }
+        return out
+      } else if (typeof value === 'object') return value
+    } else return VOID
+  },
   tco:
     func =>
     (...args) => {
