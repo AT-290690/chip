@@ -527,13 +527,10 @@ const tokens = {
   },
   ['.:']: (args, env) => args.map(item => extract(item, env)),
   ['<-']: (args, env) => exp => {
-    if (args[0].value === '*')
-      for (const method in exp) env[method] = exp[method]
-    else
-      args.forEach(arg => {
-        const method = arg.value
-        env[method] = exp[method]
-      })
+    args.forEach(arg => {
+      const method = arg.value
+      env[method] = exp[method]
+    })
     return VOID
   },
   ['|>']: (args, env) => {
