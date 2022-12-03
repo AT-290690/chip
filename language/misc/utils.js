@@ -25,24 +25,6 @@ const _length = (array) => array.length
 const _split = (string, separator) => string.split(separator)
 const _at = (array, index) => array.at(index)
 const call = (x, fn) => fn(x)
-const cast = (value, type) => {
-  if (type === '1') return Number(value)
-  else if (type === '') return String(value)
-  else if (value === null || value === undefined) return VOID
-  else if (type === '.:') {
-    if (Array.isArray(value)) return value
-    else if (typeof value === 'string') return [...value]
-    else if (typeof value === 'number') return [...String(value)].map(Number)
-    else if (typeof value === 'object') return Object.entries(value)
-  } else if (type === '::') {
-    if (typeof value === 'string' || Array.isArray(value)) return { ...value }
-    else if (typeof value === 'number') {
-      const out = { ...String(value) }
-      for (const key in out) { out[key] = Number(out[key]) }
-      return out
-    } else if (typeof value === 'object') return value
-  } else return VOID
-}
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
 

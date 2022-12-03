@@ -167,6 +167,7 @@ export const LIBRARY = {
   },
   STRING: {
     NAME: 'STRING',
+    fromcharcode: code => String.fromCharCode(code),
     interpolate: (...args) => {
       return args.reduce((acc, item) => {
         return (acc += item.toString())
@@ -193,6 +194,32 @@ export const LIBRARY = {
     integer: number => parseInt(number.toString()),
     float: (number, base = 1) => +Number(number).toFixed(base),
     number: thing => Number(thing),
+    cast: (value, type) => {
+      if (type === '1')
+        return typeof value === 'object'
+          ? Object.keys(value).length
+          : Number(value)
+      else if (type === '')
+        return typeof value === 'object' ? JSON.stringify(value) : String(value)
+      else if (value === null || value === undefined) return VOID
+      else if (type === '.:') {
+        if (Array.isArray(value)) return value
+        else if (typeof value === 'string') return [...value]
+        else if (typeof value === 'number')
+          return [...String(value)].map(Number)
+        else if (typeof value === 'object') return Object.entries(value)
+      } else if (type === '::') {
+        if (typeof value === 'string' || Array.isArray(value))
+          return { ...value }
+        else if (typeof value === 'number') {
+          const out = { ...String(value) }
+          for (const key in out) {
+            out[key] = Number(out[key])
+          }
+          return out
+        } else if (typeof value === 'object') return value
+      } else return VOID
+    },
   },
   CONSOLE: {
     consolelog: thing => console.log(thing),
@@ -453,12 +480,6 @@ export const LIBRARY = {
       entity.push(item)
       return item
     },
-    push: (entity, ...args) => entity.push(...args),
-    pop: entity => entity.pop(),
-    prepend: (entity, item) => {
-      entity.unshift(item)
-      return entity
-    },
     append: (entity, item) => {
       entity.push(item)
       return entity
@@ -473,8 +494,6 @@ export const LIBRARY = {
     },
     includes: (entity, arg) => +entity.includes(arg),
     isarray: entity => +Array.isArray(entity),
-    unshift: (entity, ...args) => entity.unshift(...args),
-    shift: entity => entity.shift(),
     fill: (entity, filling) => entity.fill(filling),
     findindex: (entity, callback) => entity.findIndex(callback),
     indexof: (entity, item) => entity.indexOf(item),
@@ -487,6 +506,19 @@ export const LIBRARY = {
     sort: (entity, callback) => entity.sort(callback),
     slice: (entity, start, end) => entity.slice(start, end),
     splice: (entity, ...args) => entity.splice(...args),
+    partition: (entity, groups = 1) => {
+      return entity.reduce((acc, _, index, arr) => {
+        if (index % groups === 0) {
+          const part = []
+          for (let i = 0; i < groups; ++i) {
+            const current = arr[index + i]
+            if (current !== undefined) part.push(current)
+          }
+          acc.push(part)
+        }
+        return acc
+      }, [])
+    },
     shuffle: array => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
@@ -906,26 +938,6 @@ export const STD = {
   //   )
   // },
   call: (x, callback) => callback(x),
-  cast: (value, type) => {
-    if (type === '1') return Number(value)
-    else if (type === '') return String(value)
-    else if (value === null || value === undefined) return VOID
-    else if (type === '.:') {
-      if (Array.isArray(value)) return value
-      else if (typeof value === 'string') return [...value]
-      else if (typeof value === 'number') return [...String(value)].map(Number)
-      else if (typeof value === 'object') return Object.entries(value)
-    } else if (type === '::') {
-      if (typeof value === 'string' || Array.isArray(value)) return { ...value }
-      else if (typeof value === 'number') {
-        const out = { ...String(value) }
-        for (const key in out) {
-          out[key] = Number(out[key])
-        }
-        return out
-      } else if (typeof value === 'object') return value
-    } else return VOID
-  },
   tco:
     func =>
     (...args) => {
