@@ -26,10 +26,7 @@ const build = () => {
     p.textContent = filterAlphabetic(title.toUpperCase())
     container.appendChild(p)
     anchor.href = `${href}${mode}.html?s=${script}`
-    anchor.textContent = filterAlphabetic(script.toUpperCase()).replace(
-      /[^A-Z]/gi,
-      ' '
-    )
+    anchor.textContent = filterAlphabetic(script).replace(/[^A-Z]/gi, ' ')
     container.appendChild(anchor)
     fragment.appendChild(container)
   })
