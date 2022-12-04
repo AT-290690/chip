@@ -35,7 +35,6 @@ const build = () => {
   })
   document.body.appendChild(fragment)
 }
-console.log(snippets)
 snippets.forEach(addScript)
 build()
 // const getScripts = async (...scripts) => {
