@@ -1,0 +1,62 @@
+<- ["MATH"; "DOM"; "CANVAS"] [LIBRARY]; 
+<- ["sin"; "cos"; "PI"] [MATH];
+<- ["makecanvas"; "makecontainer"] [DOM];
+<- ["quickcanvas"; "makefilledrect"; "setfillstyle"; "setstrokestyle"; "lineto"; "makepath"; "makestroke"; "moveto"; "setlinewidth"] [CANVAS];
+
+:= [WIDTH; 480];
+:= [HEIGHT; 400];
+:= [ctx; quick canvas [WIDTH; HEIGHT; "1px solid orchid"]];
+|> [ctx;
+    set stroke style ["orchid"];
+    make path [];
+];
+
+:= [make line; -> [x1; y1; x2; y2; |> [ctx;
+    move to [x1; y1];
+    line to [x2; y2];
+]]];
+
+  := [theta; 0.8];
+  := [step; 0.7];
+  := [angle; * [PI; 0.5]];
+  := [length; * [WIDTH; 0.25]];
+  := [level; 0];
+  := [max level; 10];
+  := [x; * [WIDTH; 0.5]];
+  := [y; * [WIDTH; 0.83]];
+
+  ;; ARRAY FOR STACK OF TREE POSITIONS
+  := [x stack; .: [max level]];
+  := [y stack; .: [max level]];
+
+  := [draw branch; -> [dir; .. [
+
+  ;; CALCULATE NEXT POINT
+  := [delta x; * [length; cos [angle]]];
+  := [delta y; * [length; sin [angle]]];
+  := [next x; + [x; delta x]];
+  := [next y; - [y; delta y]];
+
+  ;; DRAW A SINGLE BRANCH!
+  make line [x; y; next x; next y];
+  .= [x stack; level; x];
+  .= [y stack; level; y];
+  = [x; next x];
+  = [y; next y];
+  = [level; + [level; 1]];
+  = [angle; + [angle; * [theta; dir]]];
+  = [length; * [length; step]];
+
+  ;; EXIT CONDITION OF RECURSION
+  ? [< [level; max level]; .. [
+    draw branch [1];
+    draw branch [-1]]];
+
+  = [angle; - [angle; * [theta; dir]]];
+  = [length; : [length; step]];
+  = [level; - [level; 1]];
+  = [x; . [x stack; level]];
+  = [y; . [y stack; level]]]]];
+
+  draw branch [0];
+make stroke [ctx];

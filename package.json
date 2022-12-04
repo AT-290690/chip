@@ -6,8 +6,8 @@
     "arrowParens": "avoid"
   },
   "scripts": {
-    "link": "node ./language/misc/link.js --path",
-    "test": "mocha"
+    "test": "mocha",
+    "build:examples": "node ./examples/build_examples.js"
   },
   "license": "MIT",
   "dependencies": {

@@ -67,6 +67,11 @@ export const LIBRARY = {
   },
   OBJECT: {
     NAME: 'OBJECT',
+    getprototypeof: obj => Object.getPrototypeOf(obj),
+    hasown: (obj, prop) => Object.hasOwn(obj, prop),
+    hasownproperty: (obj, prop) => obj.hasOwnProperty(prop),
+    getprototype: obj => obj.prototype,
+    setprototype: (obj, prototype) => (obj.prototype = prototype),
     forin: (object, callback) => {
       for (const key in object) callback(key, object)
       return object
@@ -227,6 +232,17 @@ export const LIBRARY = {
   },
   LOGIC: {
     NAME: 'LOGIC',
+    isstring: string => +(typeof string === 'string'),
+    isnumber: number => +(typeof number === 'number'),
+    isarray: array => +Array.isArray(array),
+    isobject: object => +(typeof object === 'object' && !Array.isArray(array)),
+    isnotstring: string => +!(typeof string === 'string'),
+    isnotnumber: number => +!(typeof number === 'number'),
+    isnotarray: array => +!Array.isArray(array),
+    isnotobject: object =>
+      +!(typeof object === 'object' && !Array.isArray(array)),
+
+    is: (a, b) => Object.is(a, b),
     istrue: bol => +(!!bol === true),
     isfalse: bol => +(!!bol === false),
     isequal: (a, b) => {
@@ -538,10 +554,59 @@ export const LIBRARY = {
     first: entity => entity[0],
     last: entity => entity[entity.length - 1],
   },
+  CANVAS: {
+    NAME: 'CANVAS',
+    quickcanvas: (w = 300, h = 300, border = 'none') => {
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      canvas.style.border = border
+      const ctx = canvas.getContext('2d')
+      document.body.appendChild(canvas)
+      return ctx
+    },
+    setfillstyle: (ctx, color) => {
+      ctx.fillStyle = color
+      return ctx
+    },
+    makefilledrect: (ctx, x, y, w, h) => {
+      ctx.fillRect(x, y, w, h)
+      return ctx
+    },
+    setstrokestyle: (ctx, color) => {
+      ctx.strokeStyle = color
+      return ctx
+    },
+    setlinewidth: (ctx, width) => {
+      ctx.lineWidth = width
+      return ctx
+    },
+    makestroke: ctx => {
+      ctx.stroke()
+      return ctx
+    },
+    makepath: ctx => {
+      ctx.beginPath()
+      return ctx
+    },
+    moveto: (ctx, x, y) => {
+      ctx.moveTo(x, y)
+      return ctx
+    },
+    lineto: (ctx, x, y) => {
+      ctx.lineTo(x, y)
+      return ctx
+    },
+  },
   DOM: {
     NAME: 'DOM',
+    appendchild: (parent, child) => {
+      parent.appendChild(child)
+      return parent
+    },
     getbody: () => document.body,
     getparentnode: element => element.parentNode,
+    makefragment: () => document.createDocumentFragment(),
     getelementbyid: id => document.getElementById(id),
     getelementsbyclassname: tag => document.getElementsByClassName(tag),
     getelementsbytagname: tag => document.getElementsByTagName(tag),
@@ -562,6 +627,13 @@ export const LIBRARY = {
     },
     makeelement: (type, settings) => {
       const element = document.createElement(type)
+      for (const setting in settings) {
+        element.setAttribute(setting, settings[setting])
+      }
+      return element
+    },
+    makecanvas: settings => {
+      const element = document.createElement('canvas')
       for (const setting in settings) {
         element.setAttribute(setting, settings[setting])
       }
@@ -595,6 +667,7 @@ export const LIBRARY = {
       }
       return element
     },
+
     copyfromelement: copyElement => {
       copyElement.select()
       copyElement.setSelectionRange(0, 99999)
@@ -754,6 +827,11 @@ export const LIBRARY = {
       document.body.appendChild(div)
       return div
     },
+    makediv: (...elements) => {
+      const div = document.createElement('div')
+      elements.forEach(element => div.appendChild(element))
+      return div
+    },
     makeitalictext: content => {
       const element = document.createElement('i')
       element.textContent = content
@@ -896,6 +974,12 @@ export const LIBRARY = {
       for (const a in attr) out += `${a}: ${attr[a]};`
       return out
     },
+  },
+  TIME: {
+    NAME: 'TIME',
+    settimeout: (callback, time) => setTimeout(callback, time),
+    setinterval: (callback, time = 1000) => setInterval(callback, time),
+    setanimation: callback => requestAnimationFrame(callback),
   },
   EVENT: {
     NAME: 'EVENT',

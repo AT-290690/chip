@@ -56,7 +56,11 @@
   src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
   font-display: swap;
 }
-
+@font-face {
+  font-family: 'Drifter';
+  src: url(./assets/fonts/DrifterMono.ttf) format('truetype');
+  font-display: swap;
+}
 text,
 input,
 button,
