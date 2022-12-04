@@ -336,14 +336,16 @@ const tokens = {
     return +array.some(callback)
   },
   ['.>']: (args, env) => {
-    if (!args.length) throw new TypeError('Invalid number of arguments to .>')
+    if (args.length !== 1)
+      throw new TypeError('Invalid number of arguments to .>')
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError('First argument of .> must be an .: []')
     return array.at(0)
   },
   ['.<']: (args, env) => {
-    if (!args.length) throw new TypeError('Invalid number of arguments to .<')
+    if (args.length !== 1)
+      throw new TypeError('Invalid number of arguments to .<')
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError('First argument of .< must be an .: []')
