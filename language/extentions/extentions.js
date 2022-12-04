@@ -565,6 +565,25 @@ export const LIBRARY = {
       document.body.appendChild(canvas)
       return ctx
     },
+    clearrect: (ctx, x, y, width, height) => {
+      ctx.clearRect(x, y, width, height)
+      return ctx
+    },
+    drawimage: (
+      ctx,
+      image,
+      sx,
+      sy,
+      sWidth,
+      sHeight,
+      dx,
+      dy,
+      dWidth,
+      dHeight
+    ) => {
+      ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+      return ctx
+    },
     setfillstyle: (ctx, color) => {
       ctx.fillStyle = color
       return ctx
