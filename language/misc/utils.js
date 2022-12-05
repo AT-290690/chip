@@ -21,6 +21,7 @@ const _every = (array, callback) => array.every(callback)
 const _some = (array, callback) => array.some(callback)
 const _push = (array, value) => { array.push(value); return array }
 const _pop = (array) => { array.pop(); return array }
+const _popget = (array) => array.pop()
 const _length = (array) => array.length
 const _split = (string, separator) => string.split(separator)
 const _at = (array, index) => array.at(index)

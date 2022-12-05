@@ -145,6 +145,8 @@ const dfs = (tree, locals) => {
         )});`
       case '.:!=':
         return `_pop(${dfs(tree.args[0], locals)});`
+      case '.:<-':
+        return `_popget(${dfs(tree.args[0], locals)});`
       case './:':
         return `_split(${dfs(tree.args[0], locals)}, ${
           tree.args[1] ? dfs(tree.args[1], locals) : '""'

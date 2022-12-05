@@ -503,6 +503,14 @@ const tokens = {
     array.pop()
     return array
   },
+  ['.:<-']: (args, env) => {
+    if (args.length !== 1)
+      throw new TypeError('Invalid number of arguments to .:<-')
+    const array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError('First argument of .:<- must be an .: []')
+    return array.pop()
+  },
   ['::']: (args, env) => {
     let count = 0
     return Object.fromEntries(
