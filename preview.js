@@ -12,16 +12,13 @@ if (encoding) {
   const { body, modules } = compileToJs(parse(inlined))
   const LIBRARY = treeShake(modules)
   const script = document.createElement('script')
-  script.innerHTML = `const canvasContainer =  document.createElement('div')
-      canvasContainer.id = 'canvas-container'
-      document.body.appendChild(canvasContainer)
-      const VOID = null
-      const LOGGER = () => () => {}
-      ${Brrr.toString()}
-      ${brrrHelpers}
-      ${languageUtilsString}
-      ${LIBRARY}
-      ${body}
+  script.innerHTML = `const VOID = null
+const LOGGER = () => () => {}
+${Brrr.toString()}
+${brrrHelpers}
+${languageUtilsString}
+${LIBRARY}
+${body}
       `
   document.body.appendChild(script)
 }

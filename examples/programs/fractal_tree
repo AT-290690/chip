@@ -20,8 +20,7 @@
   := [step; 0.7];
   := [angle; * [PI; 0.5]];
   := [length; * [WIDTH; 0.25]];
-  := [level; 0];
-  := [max level; 10];
+  := [max level; 12];
   := [x; * [WIDTH; 0.5]];
   := [y; * [WIDTH; 0.83]];
 
@@ -39,11 +38,11 @@
 
   ;; DRAW A SINGLE BRANCH!
   make line [x; y; next x; next y];
-  .= [x stack; level; x];
-  .= [y stack; level; y];
+  .:= [x stack; x];
+  .:= [y stack; y];
   = [x; next x];
   = [y; next y];
-  = [level; + [level; 1]];
+  = [level; .:? [x stack]];
   = [angle; + [angle; * [theta; dir]]];
   = [length; * [length; step]];
 
@@ -54,9 +53,8 @@
 
   = [angle; - [angle; * [theta; dir]]];
   = [length; : [length; step]];
-  = [level; - [level; 1]];
-  = [x; . [x stack; level]];
-  = [y; . [y stack; level]]]]];
+  = [x; |. [x stack]];
+  = [y; |. [y stack]]]]];
 
   draw branch [0];
 make stroke [ctx];
