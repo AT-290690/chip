@@ -12,9 +12,6 @@
       "right"; units pixel [px];
       "bottom"; units pixel [px]]]];
 
-~= [loop; -> [count; callback; .. [callback [];
-? [> [count; 0]; loop [= [count; - [count; 1]]; callback]]]]];
-
 := [make rand button; -> [
 make container [|> [
   := [button; make button []];
@@ -30,7 +27,7 @@ on mouse click [-> [set text content [button; rdm [5]]]]]]]];
 
 := [group; -> [.. [
   := [container; |> [make container []; set style [display ["f"]]]];
-  loop [10; -> [insert into container [container; make rand button[]]]];
+  @ [10; -> [insert into container [container; make rand button[]]]];
   container]]];
 
-loop [5; group]
+@ [5; group]

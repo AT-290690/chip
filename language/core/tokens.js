@@ -491,24 +491,28 @@ const tokens = {
         }
     }
   },
-  ['...']: (args, env) => {
+  [':::']: (args, env) => {
     if (!args.length) throw new TypeError('Invalid number of arguments to ...')
     const [first, ...rest] = args
     const toSpread = evaluate(first, env)
-    if (typeof toSpread !== 'object')
-      throw new SyntaxError('... can only be used on .: or ::')
-    return Brrr.isBrrr(toSpread)
-      ? [
-          ...toSpread,
-          ...rest.reduce((acc, item) => [...acc, ...evaluate(item, env)], []),
-        ]
-      : {
+    if (typeof toSpread !== 'object' || Brrr.isBrrr(toSpread))
+      throw new SyntaxError('::: can only be used on ::')
+    return  {
           ...toSpread,
           ...rest.reduce(
             (acc, item) => ({ ...acc, ...evaluate(item, env) }),
             {}
           ),
         }
+  },
+  ['...']: (args, env) => {
+    if (!args.length) throw new TypeError('Invalid number of arguments to ...')
+    const [first, ...rest] = args
+    const toSpread = evaluate(first, env)
+    if (!Brrr.isBrrr(toSpread))
+      throw new SyntaxError('... can only be used on .:')
+    return toSpread.merge(...rest.map((item) => evaluate(item, env)))
+   
   },
   ['.:=']: (args, env) => {
     if (args.length !== 2)

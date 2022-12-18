@@ -181,11 +181,12 @@ const dfs = (tree, locals) => {
             }, '') +
           '}'
         )
-      case 'tco': {
+      case 'tco': 
         return '_tco(' + dfs(tree.args[0], locals) + ');'
-      }
       case '...':
-        return `_spread([${tree.args.map(x => dfs(x, locals)).join(',')}]);`
+        return `_spreadArr([${tree.args.map(x => dfs(x, locals)).join(',')}]);`
+      case ':::':
+        return `_spreadObj([${tree.args.map(x => dfs(x, locals)).join(',')}]);`
       case '|>': {
         const [param, ...rest] = tree.args.map(x => dfs(x, locals))
         return `_pipe(${rest.join(',')})(${param});`

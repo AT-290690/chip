@@ -179,4 +179,11 @@ describe('compilation should work as expected', () => {
      + [100]]`
     equal(runFromInterpreted(source), runFromCompiled(source))
   })
+  it('... and ::: shoud work', () => {
+    const source = `.: [
+      ... [.: [1; 2; 3]; .: [4; 5; 6]];
+      ::: [:: ["x"; 10]; :: ["y"; 23]]
+      ]`
+    deepEqual(runFromInterpreted(source), runFromCompiled(source))
+  })
 })

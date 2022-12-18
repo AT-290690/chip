@@ -244,4 +244,10 @@ describe('interpretation should work as expected', () => {
       101
     )
   })
+  it('... and ::: shoud work', ()=> {
+    deepEqual(runFromInterpreted(`.: [
+      ... [.: [1; 2; 3]; .: [4; 5; 6]];
+      ::: [:: ["x"; 10]; :: ["y"; 23]]
+      ]`).items, [[1, 2, 3, 4, 5, 6], { "x": 10, "y": 23 }])
+  })
 })
