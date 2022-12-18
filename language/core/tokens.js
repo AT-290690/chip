@@ -1,5 +1,5 @@
 import evaluate from './interpreter.js'
-import Brrr from '../extentions/brrr.js'
+import Brrr from '../extentions/Brrr.js'
 export const VOID = undefined
 export const pipe =
   (...fns) =>

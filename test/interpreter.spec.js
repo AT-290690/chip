@@ -235,7 +235,7 @@ describe('interpretation should work as expected', () => {
       103
     )
   })
-  it('->:. should work', () => {
+  it('.| should work', () => {
     equal(
       runFromInterpreted(`|> [
       .: [1; 2; 3];
