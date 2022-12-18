@@ -226,11 +226,11 @@ describe('interpretation should work as expected', () => {
       [1, 1, 1]
     )
   })
-  it('.:<- should work', () => {
+  it('|. should work', () => {
     equal(
       runFromInterpreted(`|> [
       .: [1; 2; 3];
-     .:<- [];
+     |. [];
      + [100]]`),
       103
     )
@@ -239,7 +239,7 @@ describe('interpretation should work as expected', () => {
     equal(
       runFromInterpreted(`|> [
       .: [1; 2; 3];
-      ->.: [];
+      .| [];
      + [100]]`),
       101
     )

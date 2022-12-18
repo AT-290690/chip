@@ -156,9 +156,9 @@ const dfs = (tree, locals) => {
         return `_head(${dfs(tree.args[0], locals)});`
       case ':.!=':
         return `_tail(${dfs(tree.args[0], locals)});`
-      case '.:<-':
+      case '|.':
         return `_cut(${dfs(tree.args[0], locals)});`
-      case '->.:':
+      case '.|':
         return `_chop(${dfs(tree.args[0], locals)});`
       case './:':
         return `_split(${dfs(tree.args[0], locals)}, ${

@@ -165,17 +165,17 @@ describe('compilation should work as expected', () => {
     const source = `:= [arr; .:[]]; @ [3; -> [.:=[arr; 1]]]`
     deepEqual(runFromInterpreted(source), runFromCompiled(source))
   })
-  it('.:<- should work', () => {
+  it('|. should work', () => {
     const source = `|> [
       .: [1; 2; 3];
-     .:<- [];
+     |. [];
      + [100]]`
     equal(runFromInterpreted(source), runFromCompiled(source))
   })
-  it('->.: should work', () => {
+  it('.| should work', () => {
     const source = `|> [
       .: [1; 2; 3];
-     .:<- [];
+     |. [];
      + [100]]`
     equal(runFromInterpreted(source), runFromCompiled(source))
   })

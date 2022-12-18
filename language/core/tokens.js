@@ -542,20 +542,20 @@ const tokens = {
       throw new TypeError('First argument of .:!= must be an .: []')
     return array.tail()
   },
-  ['.:<-']: (args, env) => {
+  ['|.']: (args, env) => {
     if (args.length !== 1)
-      throw new TypeError('Invalid number of arguments to .:<-')
+      throw new TypeError('Invalid number of arguments to |.')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of .:<- must be an .: []')
+      throw new TypeError('First argument of |. must be an .: []')
     return array.cut()
   },
-  ['->.:']: (args, env) => {
+  ['.|']: (args, env) => {
     if (args.length !== 1)
-      throw new TypeError('Invalid number of arguments to ->.:')
+      throw new TypeError('Invalid number of arguments to .|')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of ->.: must be an .: []')
+      throw new TypeError('First argument of .| must be an .: []')
     return array.chop()
   },
   ['::']: (args, env) => {
