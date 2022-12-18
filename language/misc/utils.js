@@ -38,6 +38,10 @@ const _length = (array) => array.length
 const _split = (string, separator) => Brrr.from(string.split(separator))
 const _at = (array, index) => array.at(index)
 const _set = (array, index, value) => array.set(index, value)
+const _mSort = (array, callback) => array.mergeSort(callback)
+const _qSort = (array, dir) => array.quickSort(dir)
+const _grp = (array, callback) => array.group(callback)
+const _rot = (array, n, dir) => array.rotate(n, dir)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`

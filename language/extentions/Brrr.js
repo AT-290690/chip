@@ -1,19 +1,15 @@
 export default class Brrr {
   #left = [Brrr.#negativeZeroSymbol]
   #right = []
-
   get offsetLeft() {
     return (this.#left.length - 1) * -1
   }
-
   get offsetRight() {
     return this.#right.length
   }
-
   get length() {
     return this.#left.length + this.#right.length - 1
   }
-
   set length(n) {
     const len = this.length
     if (n === len) return len
@@ -36,11 +32,6 @@ export default class Brrr {
   get reflection() {
     return { left: this.#left, right: this.#right }
   }
-  /**
-   * Returns the number of dimensions
-   * and their length
-   * @example [[[2], [[3], [2], [1]], [6]], [3]]
-   */
   get shape() {
     return _toShapeDeep(this)
   }
@@ -52,11 +43,6 @@ export default class Brrr {
     for (let i = half; i < initial.length; ++i) this.#addToRight(initial[i])
     return this
   }
-  /**
-   *  index = |offset + offset left|
-   *  if (offset + offset left >= 0) -> right [index]
-   *  else ->  left [index]
-   */
   get(offset) {
     const offsetIndex = offset + this.offsetLeft
     const index = offsetIndex < 0 ? offsetIndex * -1 : offsetIndex
@@ -144,26 +130,6 @@ export default class Brrr {
     for (let i = half; i < initial.length; ++i) this.#addToRight(initial[i])
     return this
   }
-  /**
-   * negativeZeroSymbol is the first left index
-   * It is never used.
-   * It stays there as an offset
-   * Indexing is calculated (offset + offset left)
-   * where positive results are indexing the right branch
-   * and negative are indexing the left branch
-   * index 2 is the third item of branch right
-   * index -2 is the third item of branch left
-   * When zero index is calculated to be 0 then
-   * the item is the first element of the right branch
-   * The left branch will have an unreachable value
-   * @example
-   * // Regular Array View
-   * [1, 2, 3, 4, 5, 6]
-   * // The above as Brrry Array
-   * [-0, 3, 2, 1] // left
-   *   0  1  2  3  // indexes
-   * [ 4, 5. 6, 7] // right
-   */
   static #negativeZeroSymbol = Symbol('-0')
 
   static of(...items) {
@@ -224,32 +190,12 @@ export default class Brrr {
     this.#removeFromLeft()
     return first
   }
-  /**
-   * Returns a copy of a section of an array. For both start and end,
-   * a negative index can be used to indicate an offset from the end of the array. For example,
-   * -2 refers to the second to last element of the array.
-   * @param start
-   * The beginning index of the specified portion of the array.
-   * If start is undefined, then the slice begins at index 0.
-   * @param end
-   * The end index of the specified portion of the array.
-   * This is exclusive of the element at the index 'end'.
-   * If end is undefined, then the slice extends to the end of the array.
-   */
   slice(start, end = this.length) {
     const collection = []
     end = Math.min(end, this.length)
     for (let i = start; i < end; ++i) collection.push(this.get(i))
     return Brrr.from(collection)
   }
-  /**
-   * Removes elements from an array and,
-   * if necessary, inserts new elements in their place,
-   * returning the deleted elements.
-   * @param start — The zero-based location in the array from which to start removing elements.
-   * @param deleteCount — The number of elements to remove.
-   * @returns — An array containing the elements that were deleted.
-   */
   splice(dir, deleteCount, ...items) {
     const start = Math.abs(dir)
     deleteCount = deleteCount ?? this.length - start
@@ -271,40 +217,20 @@ export default class Brrr {
     }
     return deleted
   }
-  /**
-   * Returns the index of the first occurrence of a value in an array,
-   * or -1 if it is not present.
-   * @param searchElement — The value to locate in the array.
-   * @param fromIndex — The array index at which to begin the search.
-   * If fromIndex is omitted, the search starts at index 0.
-   */
   indexOf(item) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (this.get(i) === item) return i
     return -1
   }
-  /**
-   * Returns the index of the last occurrence of a specified value in an array,
-   * or -1 if it is not present.
-   * @param searchElement — The value to locate in the array.
-   * @param fromIndex — The array index at which to begin searching backward.
-   * If fromIndex is omitted, the search starts at the last index in the array.
-   */
   lastIndexOf(item) {
     for (let i = this.length - 1; i >= 0; i--)
       if (this.get(i) === item) return i
   }
-
   includes(val, fromIndex = 0) {
     for (let i = fromIndex, len = this.length; i < len; ++i)
       if (_sameValueZero(this.get(i), val)) return true
     return false
   }
-  /**
-   * Returns the value of the first element in the array where predicate is true, and undefined otherwise.
-   * @param predicate
-   * find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined.
-   */
   find(callback = _Identity, startIndex = 0) {
     for (let i = startIndex, len = this.length; i < len; ++i) {
       if (i >= this.length) return
@@ -312,7 +238,6 @@ export default class Brrr {
       if (callback(current, i, this)) return current
     }
   }
-
   findLast(callback = _Identity, startIndex = 0) {
     for (let i = this.length - 1 - startIndex; i >= 0; i--) {
       if (i >= this.length) return
@@ -320,24 +245,11 @@ export default class Brrr {
       if (callback(current, i, this)) return current
     }
   }
-  /**
-   * Determines whether the specified callback function returns true for any element of an array.
-   * @param predicate
-   * A function that accepts up to three arguments.
-   * The some method calls the predicate function for each element in the array
-   * until the predicate returns a value which is coercible to the Boolean value true,
-   * or until the end of the array.
-   */
   some(callback = _Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (callback(this.get(i), i, this)) return true
     return false
   }
-  /**
-   * Determines whether all the members of an array satisfy the specified test.
-   * @param predicate
-   * A function that accepts up to three arguments. The every method calls the predicate function for each element in the array until the predicate returns a value which is coercible to the Boolean value false, or until the end of the array.
-   */
   every(callback = _Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (i >= this.length || !callback(this.get(i), i, this)) return false
@@ -359,12 +271,6 @@ export default class Brrr {
     }
     return -1
   }
-  /**
-   * Calls a defined callback function on each element of an array,
-   * and returns an array that contains the results.
-   * @param callbackfn — A function that accepts up to three arguments.
-   * The map method calls the callbackfn function one time for each element in the array.
-   */
   map(callback) {
     const result = new Brrr()
     const half = (this.length / 2) | 0.5
@@ -374,44 +280,25 @@ export default class Brrr {
       result.#addToRight(callback(this.get(i), i, this))
     return result
   }
-
   mapMut(callback) {
     for (let i = 0, len = this.length; i < len; ++i)
       this.set(i, callback(this.get(i), i, this))
     return this
   }
-
   forEach(callback) {
     for (let i = 0, len = this.length; i < len; ++i)
       callback(this.get(i), i, this)
   }
-  /**
-   * Calls the specified callback function for all the elements in an array.
-   * The return value of the callback function is the accumulated result,
-   * and is provided as an argument in the next call to the callback function.
-   * @param callbackfn — A function that accepts up to four arguments.
-   * The reduce method calls the callbackfn function one time for each element in the array.
-   * @param initialValue — If initialValue is specified,
-   * it is used as the initial value to start the accumulation.
-   * The first call to the callbackfn function provides this value as an argument
-   * instead of an array value.
-   */
   reduce(callback, initial = this.get(0)) {
     for (let i = 0, len = this.length; i < len; ++i)
       initial = callback(initial, this.get(i), i, this)
     return initial
   }
-
   reduceRight(callback, initial = this.at(-1)) {
     for (let i = this.length - 1; i >= 0; i--)
       initial = callback(initial, this.get(i), i, this)
     return initial
   }
-  /**
-   * Returns the elements of an array that meet the condition specified in a callback function.
-   * @param predicate — A function that accepts up to three arguments.
-   * The filter method calls the predicate function one time for each element in the array.
-   */
   filter(callback = _Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
@@ -421,7 +308,6 @@ export default class Brrr {
     }
     return Brrr.from(out)
   }
-
   reject(callback = _Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
@@ -431,10 +317,6 @@ export default class Brrr {
     }
     return Brrr.from(out)
   }
-  /**
-   * Reverses the elements in an array in place.
-   * This method mutates the array and returns a reference to the same array.
-   */
   reverse() {
     const left = this.#left
     const right = this.#right
@@ -443,21 +325,7 @@ export default class Brrr {
     this.#right = left
     return this
   }
-
-  /**
-   * The _Group method executes the callback function once for each index of the Brrry Array,
-   * returning a string (or value that can be coerced to a string) indicating the _Group of the element.
-   * A new property and Brrry Array is created in the result object for each unique _Group name
-   * that is returned by the callback.
-   * Each element is added to the Brrry Array in the property that corresponds to its _Group.
-   * @param callback - (item, index, arr )
-   * @returns Object
-   * @example
-   * Brrr.with(1,2,3,4)._Group((item) => (item % 2 == 0 ? "even" : "odd")
-   * // retunrs (this is array view)
-   * {"odd":[1,3],"even":[2,4]}
-   */
-  _Group(callback = _Identity) {
+  group(callback = _Identity) {
     const out = this.reduce((acc, item, index, arr) => {
       const key = callback(item, index, arr)
       if (acc.has(key)) acc.get(key).append(item)
@@ -467,31 +335,14 @@ export default class Brrr {
     out.forEach(item => item.balance())
     return out
   }
-
-  /**
-   * perform merge sort - requires extra memory
-   * @param callback - the condition of sorting
-   * defaults to ascending
-   * @example
-   * (a, b) => (a < b ? -1 : 1)
-   * */
-  _mergeSort(callback = (a, b) => (a < b ? -1 : 1)) {
+  mergeSort(callback = (a, b) => (a < b ? -1 : 1)) {
     return _mergeSort(this, callback)
   }
-  /**
-   * perform quick sort - requires extra memory
-   * @param order - the order of sorting
-   * defaults to ascending
-   * @example
-   * arr.quickSort('asc')
-   * arr.quickSort('des')
-   * */
   quickSort(order) {
-    return order === 'des'
+    return order === -1
       ? _quickSortDesc(this, 0, this.length - 1)
       : _quickSortAsc(this, 0, this.length - 1)
   }
-
   join(separator = ',') {
     let output = ''
     for (let i = 0, len = this.length; i < len - 1; ++i)
@@ -510,11 +361,6 @@ export default class Brrr {
   concat(second) {
     return Brrr.from([...this, ...second])
   }
-  /**
-   * Returns a new array with all sub-array elements concatenated
-   * into it recursively up to the specified depth.
-   * @param depth — The maximum recursion depth
-   */
   flat(levels = 1) {
     const flat =
       levels === Infinity
@@ -579,65 +425,45 @@ export default class Brrr {
     }
     return this
   }
-  /**
-   * Convert to JavaScript Array
-   * by default only converts on the first level
-   * @param deep — convert nested structures to JavaScript Array
-   */
   toArray(deep = false) {
     return deep ? _toArrayDeep(this) : [...this]
   }
-
   toObject(deep = false) {
     return deep ? _toObjectDeep(this) : this.reflection
   }
-
   async toPromise() {
     return Brrr.from(await Promise.all(this.items))
   }
-
   append(item) {
     this.#addToRight(item)
     return this
   }
-
   prepend(item) {
     this.#addToLeft(item)
     return this
   }
-  /**
-   * Remove the last element
-   * @returns the removed element
-   */
   cut() {
     if (this.offsetRight === 0) this.balance()
     const last = this.last
     this.#removeFromRight()
     return last
   }
-  /**
-   * Remove the first element
-   * @returns the removed element
-   */
   chop() {
     if (this.offsetLeft === 0) this.balance()
     const first = this.first
     this.#removeFromLeft()
     return first
   }
-
   head() {
     if (this.offsetRight === 0) this.balance()
     this.#removeFromRight()
     return this
   }
-
   tail() {
     if (this.offsetLeft === 0) this.balance()
     this.#removeFromLeft()
     return this
   }
-
   insertRight(...items) {
     for (let i = 0; i < items.length; ++i) this.#addToRight(items[i])
     return this
@@ -647,29 +473,12 @@ export default class Brrr {
     for (let i = items.length - 1; i >= 0; i--) this.#addToLeft(items[i])
     return this
   }
-
-  /**
-   * Creates a slice of array with n elements taken from the beginning.
-   * @params
-    array (Array): The array to query.
-    [n=1] (number): The number of elements to take.
-    @returns
-    (Array): Returns the slice of array.
-    @example 
-    [1, 2, 3].take() // => [1]
-    [1, 2, 3].take(2) // => [1, 2]
-    [1, 2, 3].take(5) // => [1, 2, 3]
-    [1, 2, 3].take(0); // => []
-   */
   take(n = 1) {
     const collection = []
     const len = Math.min(n, this.length)
     for (let i = 0; i < len; ++i) collection.push(this.get(i))
     return Brrr.from(collection)
   }
-  /**
-   * Creates a slice of array with n elements taken from the end.
-   */
   takeRight(n = 1) {
     const collection = []
     const length = this.length
@@ -677,13 +486,11 @@ export default class Brrr {
     for (let i = 0; i < len; ++i) collection.push(this.get(length - (len - i)))
     return Brrr.from(collection)
   }
-
   to(callback, initial = new Brrr()) {
     for (let i = 0, len = this.length; i < len; ++i)
       initial = callback(initial, this.get(i), i, this)
     return initial
   }
-
   rotateLeft(n = 1) {
     n = n % this.length
     for (let i = 0; i < n; ++i) {
@@ -693,7 +500,6 @@ export default class Brrr {
     }
     return this
   }
-
   rotateRight(n = 1) {
     n = n % this.length
     for (let i = 0; i < n; ++i) {
@@ -703,22 +509,17 @@ export default class Brrr {
     }
     return this
   }
-
   rotate(n = 1, direction = 1) {
     return direction === 1 ? this.rotateRight(n) : this.rotateLeft(n)
   }
-
-  // Creates an array excluding all given values using _sameValueZero for equality comparisons.
   without(...excludes) {
     return this.filter(
       item => !excludes.some(exclude => _sameValueZero(item, exclude))
     )
   }
-
   compact() {
     return this.filter(Boolean)
   }
-
   union(b) {
     const a = this
     const out = new Brrr()
@@ -761,11 +562,11 @@ export default class Brrr {
     return out
   }
 
-  partition(_Groups = 1) {
+  partition(groups = 1) {
     const res = this.reduce((acc, _, index, arr) => {
       if (index % _Groups === 0) {
         const part = new Brrr()
-        for (let i = 0; i < _Groups; ++i) {
+        for (let i = 0; i < groups; ++i) {
           const current = arr.get(index + i)
           if (current !== undefined) part.append(current)
         }
@@ -892,35 +693,15 @@ export default class Brrr {
     return this.set(index % this.length, value)
   }
 
-  /**
-   * @param order
-   * check if the array is sorted
-   * defaults to scending
-   * if a function is provided it will use it instead
-   * the default signature is
-   * @example
-   * (current, index, arr) => !index || arr.at(index - 1) <= current
-   * @returns boolean
-   */
-  isSorted(order = 'asc') {
+  isSorted(order = 1) {
     return this.every(
       typeof order === 'function'
         ? order
-        : order === 'asc'
+        : order === 1
         ? (current, index, arr) => !index || arr.at(index - 1) <= current
         : (current, index, arr) => !index || arr.at(index - 1) >= current
     )
   }
-  /**
-   * perform brrry search queries in the array
-   * requires the array to be sorted first!
-   * @param target
-   * @param _Identity
-   * @param greather
-   * @example
-   * current => current.key // _Identity
-   * current => _Identity(current) > target // greather
-   * */
   search(target, _Identity = _Identity, greather) {
     return _binarySearch(
       this,
@@ -932,18 +713,6 @@ export default class Brrr {
     )
   }
 }
-
-/**  Helper functions */
-/** 
-  If Type(x) is different from Type(y), return false.
-  If Type(x) is Number, then
-  If x is NaN and y is NaN, return true.
-  If x is +0 and y is -0, return true.
-  If x is -0 and y is +0, return true.
-  If x is the same Number value as y, return true.
-  Return false.
-  Return SameValueNonNumber(x, y).
-*/
 const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
 const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 const _isIterable = iter =>

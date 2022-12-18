@@ -277,6 +277,53 @@ const tokens = {
       copy.set(i, callback(array.get(i), i, array))
     return copy
   },
+  ['>>.:']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to >>.:')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of >>.: must be an .: []')
+    const dir = evaluate(args[1], env)
+    if (dir !== -1 && dir !== 1)
+      throw new TypeError('Second argument of >>.: must be either -1 or 1')
+    return array.quickSort(dir)
+  },
+  ['::.:']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to ::.:')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of ::.: must be an .: []')
+    const callback = evaluate(args[1], env)
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of ::.: must be an -> []')
+     return array.mergeSort(callback)
+  },
+  ['.::']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to .::')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of .:: must be an .: []')
+    const callback = evaluate(args[1], env)
+    if (typeof callback !== 'function')
+      throw new TypeError('Second argument of .:: must be an -> []')
+     return array.group(callback)
+  },
+  ['.:@']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to .:@')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of ..:@ must be an .: []')
+      const n = evaluate(args[1], env)
+    if (typeof n !== 'number' || n <= 0)
+      throw new TypeError('Second argument of .:@ must be a positive number')
+    const dir = evaluate(args[2], env)
+    if (dir !== -1 && dir !== 1)
+      throw new TypeError('Third argument of .:@ must be either -1 or 1')
+     return array.rotate(dir)
+  },
   ['@']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to @')
