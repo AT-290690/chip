@@ -32,7 +32,267 @@ const _set = (array, index, value) => array.set(index, value)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
+const brrrHelpers = `const sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+const isIterable = iter =>
+  iter === null || iter === undefined
+    ? false
+    : typeof iter[Symbol.iterator] === 'function'
 
+const tailCallOptimisedRecursion =
+  func =>
+  (...args) => {
+    let result = func(...args)
+    while (typeof result === 'function') result = result()
+    return result
+  }
+
+const flatten = (collection, levels, flat) =>
+  collection.reduce((acc, current) => {
+    if (Brrr.isBrrr(current)) acc.push(...flat(current, levels))
+    else acc.push(current)
+    return acc
+  }, [])
+
+const toMatrix = (...args) => {
+  if (args.length === 0) return
+  const dimensions = new Brrr().with(...args)
+  const dim = dimensions.chop()
+  const arr = new Brrr()
+  for (let i = 0; i < dim; ++i) arr.set(i, toMatrix(...dimensions))
+  return arr
+}
+
+const toArrayDeep = entity => {
+  return Brrr.isBrrr(entity)
+    ? entity
+        .map(item =>
+          Brrr.isBrrr(item)
+            ? item.some(Brrr.isBrrr)
+              ? toArrayDeep(item)
+              : item.toArray()
+            : item
+        )
+        .toArray()
+    : entity
+}
+
+const toObjectDeep = entity => {
+  return Brrr.isBrrr(entity)
+    ? entity
+        .map(item =>
+          Brrr.isBrrr(item)
+            ? item.some(Brrr.isBrrr)
+              ? toObjectDeep(item)
+              : item.toObject()
+            : item
+        )
+        .toObject()
+    : entity
+}
+const toShapeDeep = (entity, out = []) => {
+  if (Brrr.isBrrr(entity.get(0))) {
+    entity.forEach(item => {
+      out.push(toShapeDeep(item))
+    })
+  } else {
+    out = [entity.length]
+  }
+  return out
+}
+
+const quickSortAsc = (items, left, right) => {
+  if (items.length > 1) {
+    let pivot = items.get(((right + left) / 2) | 0.5),
+      i = left,
+      j = right
+    while (i <= j) {
+      while (items.get(i) < pivot) ++i
+      while (items.get(j) > pivot) j--
+      if (i <= j) {
+        items.swap(i, j)
+        ++i
+        j--
+      }
+    }
+    if (left < i - 1) quickSortAsc(items, left, i - 1)
+    if (i < right) quickSortAsc(items, i, right)
+  }
+  return items
+}
+
+const quickSortDesc = (items, left, right) => {
+  if (items.length > 1) {
+    let pivot = items.get(((right + left) / 2) | 0.5),
+      i = left,
+      j = right
+    while (i <= j) {
+      while (items.get(i) > pivot) ++i
+      while (items.get(j) < pivot) j--
+      if (i <= j) {
+        items.swap(i, j)
+        ++i
+        j--
+      }
+    }
+    if (left < i - 1) quickSortDesc(items, left, i - 1)
+    if (i < right) quickSortDesc(items, i, right)
+  }
+  return items
+}
+
+const merge = (left, right, callback) => {
+  const arr = []
+  while (left.length && right.length) {
+    callback(right.at(0), left.at(0)) > 0
+      ? arr.push(left.chop())
+      : arr.push(right.chop())
+  }
+
+  for (let i = 0; i < left.length; ++i) {
+    arr.push(left.get(i))
+  }
+  for (let i = 0; i < right.length; ++i) {
+    arr.push(right.get(i))
+  }
+  const out = new Brrr()
+  const half = (arr.length / 2) | 0.5
+  for (let i = half - 1; i >= 0; i--) out.prepend(arr[i])
+  for (let i = half; i < arr.length; ++i) out.append(arr[i])
+  return out
+}
+
+const mergeSort = (array, callback) => {
+  const half = (array.length / 2) | 0.5
+  if (array.length < 2) {
+    return array
+  }
+  const left = array.splice(0, half)
+  return merge(mergeSort(left, callback), mergeSort(array, callback), callback)
+}
+
+const binarySearch = tailCallOptimisedRecursion(
+  (arr, target, by, greather, start, end) => {
+    if (start > end) return undefined
+    const index = ((start + end) / 2) | 0.5
+    const current = arr.get(index)
+    if (current === undefined) return undefined
+    const identity = by(current)
+    if (identity === target) return current
+    if (greather(current))
+      return binarySearch(arr, target, by, greather, start, index - 1)
+    else return binarySearch(arr, target, by, greather, index + 1, end)
+  }
+)
+const Identity = current => current
+class Group {
+  constructor() {
+    this.items = {}
+  }
+  get(key) {
+    return this.items[key]
+  }
+  set(key, value) {
+    this.items[key] = value
+    return this
+  }
+  get values() {
+    return Object.values(this.items)
+  }
+  get keys() {
+    return Object.keys(this.items)
+  }
+  has(key) {
+    return key in this.items
+  }
+  forEntries(callback) {
+    for (let key in this.items) {
+      callback([key, this.items[key]], this.items)
+    }
+    return this
+  }
+  forEach(callback) {
+    for (let key in this.items) {
+      callback(this.items[key], key)
+    }
+    return this
+  }
+  map(callback) {
+    for (let key in this.items) {
+      this.items[key] = callback(this.items[key], key, this.items)
+    }
+    return this
+  }
+}
+
+const isEqual = (a, b) => {
+  if (a === b) return true
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    if (a.constructor !== b.constructor) return false
+    let length, i, keys
+    if (Brrr.isBrrr(a) && Brrr.isBrrr(b)) {
+      length = a.length
+      if (length != b.length) return false
+      for (i = length; i-- !== 0; )
+        if (!isEqual(a.get(i), b.get(i))) return false
+      return true
+    }
+    if (Array.isArray(a)) {
+      length = a.length
+      if (length != b.length) return false
+      for (i = length; i-- !== 0; ) if (!isEqual(a[i], b[i])) return false
+      return true
+    }
+    if (a instanceof Map && b instanceof Map) {
+      if (a.size !== b.size) return false
+      for (i of a.entries()) if (!b.has(i[0])) return false
+      for (i of a.entries()) if (!isEqual(i[1], b.get(i[0]))) return false
+      return true
+    }
+    if (a instanceof Set && b instanceof Set) {
+      if (a.size !== b.size) return false
+      for (i of a.entries()) if (!b.has(i[0])) return false
+      return true
+    }
+    if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {
+      length = a.length
+      if (length != b.length) return false
+      for (i = length; i-- !== 0; ) if (a[i] !== b[i]) return false
+      return true
+    }
+    if (a.constructor === RegExp)
+      return a.source === b.source && a.flags === b.flags
+    if (a.valueOf !== Object.prototype.valueOf)
+      return a.valueOf() === b.valueOf()
+    if (a.toString !== Object.prototype.toString)
+      return a.toString() === b.toString()
+    keys = Object.keys(a)
+    length = keys.length
+    if (length !== Object.keys(b).length) return false
+    for (i = length; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
+    for (i = length; i-- !== 0; ) {
+      let key = keys[i]
+      if (!isEqual(a[key], b[key])) return false
+    }
+    return true
+  }
+  // true if both NaN, false otherwise
+  return a !== a && b !== b
+}
+
+class Shadow {
+  isShortCircuited() {
+    return true
+  }
+}
+for (const method of Brrr.from([
+  ...Object.getOwnPropertyNames(Brrr),
+  ...Object.getOwnPropertyNames(Brrr.prototype),
+]).without('prototype', 'isShortCircuited', 'constructor').items) {
+  Shadow.prototype[method] = () => shadow
+}
+const shadow = Object.freeze(new Shadow())`
 export const logBoldMessage = msg => console.log('\x1b[1m', msg)
 export const logErrorMessage = msg =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
@@ -133,6 +393,8 @@ export const compileModule = source => {
   const { body, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
   return `const VOID = null;
+${Brrr.toString()}
+${brrrHelpers}
 ${languageUtilsString}
 ${lib};
 ${body}`
@@ -146,6 +408,8 @@ export const compileHtml = (source, scripts = '') => {
 <style>body { background: #0e0e0e } </style><body>
 ${scripts}
 <script>
+${Brrr.toString()}
+${brrrHelpers}
 const VOID = null;
 ${languageUtilsString}
 </script>
@@ -161,9 +425,10 @@ export const interpredHtml = (
 ) => {
   const inlined = wrapInBody(removeNoCode(source))
   return `<style>body { background: black } </style>
-  ${Brrr.toString()}
   ${scripts}
 <script type="module">
+${Brrr.toString()}
+${brrrHelpers}
 import { exe } from '${utils}'; 
   try { 
     exe('${inlined}') 
