@@ -30,7 +30,7 @@ export default class Brrr {
   }
 
   get items() {
-    return toArrayDeep(this)
+    return _toArrayDeep(this)
   }
 
   get reflection() {
@@ -42,7 +42,7 @@ export default class Brrr {
    * @example [[[2], [[3], [2], [1]], [6]], [3]]
    */
   get shape() {
-    return toShapeDeep(this)
+    return _toShapeDeep(this)
   }
 
   with(...initial) {
@@ -119,8 +119,8 @@ export default class Brrr {
     return this.some(x => x == undefined)
   }
 
-  isEqual(other) {
-    return isEqual(this, other)
+  _isEqual(other) {
+    return _isEqual(this, other)
   }
 
   isShortCircuited() {
@@ -128,11 +128,11 @@ export default class Brrr {
   }
 
   shortCircuitIf(predicate) {
-    return predicate(this) ? shadow : this
+    return predicate(this) ? _shadow : this
   }
 
   shortCircuitUnless(predicate) {
-    return predicate(this) ? this : shadow
+    return predicate(this) ? this : _shadow
   }
 
   balance() {
@@ -175,7 +175,7 @@ export default class Brrr {
   }
 
   static from(iterable) {
-    if (!isIterable(iterable))
+    if (!_isIterable(iterable))
       throw new Error('TypeError: From input is not iterable')
     const out = new Brrr()
     const half = (iterable.length / 2) | 0.5
@@ -185,7 +185,7 @@ export default class Brrr {
   }
 
   static matrix(...dimensions) {
-    return toMatrix(...dimensions)
+    return _toMatrix(...dimensions)
   }
 
   static zeroes(size) {
@@ -297,7 +297,7 @@ export default class Brrr {
 
   includes(val, fromIndex = 0) {
     for (let i = fromIndex, len = this.length; i < len; ++i)
-      if (sameValueZero(this.get(i), val)) return true
+      if (_sameValueZero(this.get(i), val)) return true
     return false
   }
   /**
@@ -305,7 +305,7 @@ export default class Brrr {
    * @param predicate
    * find calls predicate once for each element of the array, in ascending order, until it finds one where predicate returns true. If such an element is found, find immediately returns that element value. Otherwise, find returns undefined.
    */
-  find(callback = Identity, startIndex = 0) {
+  find(callback = _Identity, startIndex = 0) {
     for (let i = startIndex, len = this.length; i < len; ++i) {
       if (i >= this.length) return
       const current = this.get(i)
@@ -313,7 +313,7 @@ export default class Brrr {
     }
   }
 
-  findLast(callback = Identity, startIndex = 0) {
+  findLast(callback = _Identity, startIndex = 0) {
     for (let i = this.length - 1 - startIndex; i >= 0; i--) {
       if (i >= this.length) return
       const current = this.get(i)
@@ -328,7 +328,7 @@ export default class Brrr {
    * until the predicate returns a value which is coercible to the Boolean value true,
    * or until the end of the array.
    */
-  some(callback = Identity) {
+  some(callback = _Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (callback(this.get(i), i, this)) return true
     return false
@@ -338,13 +338,13 @@ export default class Brrr {
    * @param predicate
    * A function that accepts up to three arguments. The every method calls the predicate function for each element in the array until the predicate returns a value which is coercible to the Boolean value false, or until the end of the array.
    */
-  every(callback = Identity) {
+  every(callback = _Identity) {
     for (let i = 0, len = this.length; i < len; ++i)
       if (i >= this.length || !callback(this.get(i), i, this)) return false
     return true
   }
 
-  findIndex(callback = Identity, startIndex = 0) {
+  findIndex(callback = _Identity, startIndex = 0) {
     for (let i = startIndex, len = this.length; i < len; ++i) {
       const current = this.get(i)
       if (callback(current, i, this)) return i
@@ -352,7 +352,7 @@ export default class Brrr {
     return -1
   }
 
-  findLastIndex(callback = Identity, startIndex = 0) {
+  findLastIndex(callback = _Identity, startIndex = 0) {
     for (let i = this.length - 1 - startIndex; i >= 0; i--) {
       const current = this.get(i)
       if (callback(current, i, this)) return i
@@ -412,7 +412,7 @@ export default class Brrr {
    * @param predicate — A function that accepts up to three arguments.
    * The filter method calls the predicate function one time for each element in the array.
    */
-  filter(callback = Identity) {
+  filter(callback = _Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
       const current = this.get(i)
@@ -422,7 +422,7 @@ export default class Brrr {
     return Brrr.from(out)
   }
 
-  reject(callback = Identity) {
+  reject(callback = _Identity) {
     const out = []
     for (let i = 0, len = this.length; i < len; ++i) {
       const current = this.get(i)
@@ -445,25 +445,25 @@ export default class Brrr {
   }
 
   /**
-   * The group method executes the callback function once for each index of the Brrry Array,
-   * returning a string (or value that can be coerced to a string) indicating the group of the element.
-   * A new property and Brrry Array is created in the result object for each unique group name
+   * The _Group method executes the callback function once for each index of the Brrry Array,
+   * returning a string (or value that can be coerced to a string) indicating the _Group of the element.
+   * A new property and Brrry Array is created in the result object for each unique _Group name
    * that is returned by the callback.
-   * Each element is added to the Brrry Array in the property that corresponds to its group.
+   * Each element is added to the Brrry Array in the property that corresponds to its _Group.
    * @param callback - (item, index, arr )
    * @returns Object
    * @example
-   * Brrr.with(1,2,3,4).group((item) => (item % 2 == 0 ? "even" : "odd")
+   * Brrr.with(1,2,3,4)._Group((item) => (item % 2 == 0 ? "even" : "odd")
    * // retunrs (this is array view)
    * {"odd":[1,3],"even":[2,4]}
    */
-  group(callback = Identity) {
+  _Group(callback = _Identity) {
     const out = this.reduce((acc, item, index, arr) => {
       const key = callback(item, index, arr)
       if (acc.has(key)) acc.get(key).append(item)
       else acc.set(key, new Brrr(key).with(item))
       return acc
-    }, new Group())
+    }, new _Group())
     out.forEach(item => item.balance())
     return out
   }
@@ -475,8 +475,8 @@ export default class Brrr {
    * @example
    * (a, b) => (a < b ? -1 : 1)
    * */
-  mergeSort(callback = (a, b) => (a < b ? -1 : 1)) {
-    return mergeSort(this, callback)
+  _mergeSort(callback = (a, b) => (a < b ? -1 : 1)) {
+    return _mergeSort(this, callback)
   }
   /**
    * perform quick sort - requires extra memory
@@ -488,8 +488,8 @@ export default class Brrr {
    * */
   quickSort(order) {
     return order === 'des'
-      ? quickSortDesc(this, 0, this.length - 1)
-      : quickSortAsc(this, 0, this.length - 1)
+      ? _quickSortDesc(this, 0, this.length - 1)
+      : _quickSortAsc(this, 0, this.length - 1)
   }
 
   join(separator = ',') {
@@ -518,17 +518,17 @@ export default class Brrr {
   flat(levels = 1) {
     const flat =
       levels === Infinity
-        ? collection => flatten(collection, levels, flat)
+        ? collection => _flatten(collection, levels, flat)
         : (collection, levels) => {
             levels--
             return levels === -1
               ? collection
-              : flatten(collection, levels, flat)
+              : _flatten(collection, levels, flat)
           }
     return Brrr.from(flat(this, levels))
   }
 
-  flatten(callback) {
+  _flatten(callback) {
     return Brrr.from(
       this.reduce((acc, current, index, self) => {
         if (Brrr.isBrrr(current))
@@ -585,11 +585,11 @@ export default class Brrr {
    * @param deep — convert nested structures to JavaScript Array
    */
   toArray(deep = false) {
-    return deep ? toArrayDeep(this) : [...this]
+    return deep ? _toArrayDeep(this) : [...this]
   }
 
   toObject(deep = false) {
-    return deep ? toObjectDeep(this) : this.reflection
+    return deep ? _toObjectDeep(this) : this.reflection
   }
 
   async toPromise() {
@@ -708,10 +708,10 @@ export default class Brrr {
     return direction === 1 ? this.rotateRight(n) : this.rotateLeft(n)
   }
 
-  // Creates an array excluding all given values using SameValueZero for equality comparisons.
+  // Creates an array excluding all given values using _sameValueZero for equality comparisons.
   without(...excludes) {
     return this.filter(
-      item => !excludes.some(exclude => sameValueZero(item, exclude))
+      item => !excludes.some(exclude => _sameValueZero(item, exclude))
     )
   }
 
@@ -761,11 +761,11 @@ export default class Brrr {
     return out
   }
 
-  partition(groups = 1) {
+  partition(_Groups = 1) {
     const res = this.reduce((acc, _, index, arr) => {
-      if (index % groups === 0) {
+      if (index % _Groups === 0) {
         const part = new Brrr()
-        for (let i = 0; i < groups; ++i) {
+        for (let i = 0; i < _Groups; ++i) {
           const current = arr.get(index + i)
           if (current !== undefined) part.append(current)
         }
@@ -877,11 +877,11 @@ export default class Brrr {
   }
 
   getInBounds(index) {
-    return this.get(clamp(index, 0, this.length - 1))
+    return this.get(_clamp(index, 0, this.length - 1))
   }
 
   setInBounds(index, value) {
-    return this.set(clamp(index, 0, this.length - 1), value)
+    return this.set(_clamp(index, 0, this.length - 1), value)
   }
 
   getInWrap(index) {
@@ -915,18 +915,18 @@ export default class Brrr {
    * perform brrry search queries in the array
    * requires the array to be sorted first!
    * @param target
-   * @param identity
+   * @param _Identity
    * @param greather
    * @example
-   * current => current.key // identity
-   * current => identity(current) > target // greather
+   * current => current.key // _Identity
+   * current => _Identity(current) > target // greather
    * */
-  search(target, identity = Identity, greather) {
-    return binarySearch(
+  search(target, _Identity = _Identity, greather) {
+    return _binarySearch(
       this,
       target,
-      identity,
-      greather ?? (current => identity(current) > target),
+      _Identity,
+      greather ?? (current => _Identity(current) > target),
       0,
       this.length
     )
@@ -944,14 +944,14 @@ export default class Brrr {
   Return false.
   Return SameValueNonNumber(x, y).
 */
-const sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
-const isIterable = iter =>
+const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
+const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+const _isIterable = iter =>
   iter === null || iter === undefined
     ? false
     : typeof iter[Symbol.iterator] === 'function'
 
-const tailCallOptimisedRecursion =
+const _tailCallOptimisedRecursion =
   func =>
   (...args) => {
     let result = func(...args)
@@ -959,29 +959,29 @@ const tailCallOptimisedRecursion =
     return result
   }
 
-const flatten = (collection, levels, flat) =>
+const _flatten = (collection, levels, flat) =>
   collection.reduce((acc, current) => {
     if (Brrr.isBrrr(current)) acc.push(...flat(current, levels))
     else acc.push(current)
     return acc
   }, [])
 
-const toMatrix = (...args) => {
+const _toMatrix = (...args) => {
   if (args.length === 0) return
   const dimensions = new Brrr().with(...args)
   const dim = dimensions.chop()
   const arr = new Brrr()
-  for (let i = 0; i < dim; ++i) arr.set(i, toMatrix(...dimensions))
+  for (let i = 0; i < dim; ++i) arr.set(i, _toMatrix(...dimensions))
   return arr
 }
 
-const toArrayDeep = entity => {
+const _toArrayDeep = entity => {
   return Brrr.isBrrr(entity)
     ? entity
         .map(item =>
           Brrr.isBrrr(item)
             ? item.some(Brrr.isBrrr)
-              ? toArrayDeep(item)
+              ? _toArrayDeep(item)
               : item.toArray()
             : item
         )
@@ -989,23 +989,23 @@ const toArrayDeep = entity => {
     : entity
 }
 
-const toObjectDeep = entity => {
+const _toObjectDeep = entity => {
   return Brrr.isBrrr(entity)
     ? entity
         .map(item =>
           Brrr.isBrrr(item)
             ? item.some(Brrr.isBrrr)
-              ? toObjectDeep(item)
+              ? _toObjectDeep(item)
               : item.toObject()
             : item
         )
         .toObject()
     : entity
 }
-const toShapeDeep = (entity, out = []) => {
+const _toShapeDeep = (entity, out = []) => {
   if (Brrr.isBrrr(entity.get(0))) {
     entity.forEach(item => {
-      out.push(toShapeDeep(item))
+      out.push(_toShapeDeep(item))
     })
   } else {
     out = [entity.length]
@@ -1013,7 +1013,7 @@ const toShapeDeep = (entity, out = []) => {
   return out
 }
 
-const quickSortAsc = (items, left, right) => {
+const _quickSortAsc = (items, left, right) => {
   if (items.length > 1) {
     let pivot = items.get(((right + left) / 2) | 0.5),
       i = left,
@@ -1027,13 +1027,13 @@ const quickSortAsc = (items, left, right) => {
         j--
       }
     }
-    if (left < i - 1) quickSortAsc(items, left, i - 1)
-    if (i < right) quickSortAsc(items, i, right)
+    if (left < i - 1) _quickSortAsc(items, left, i - 1)
+    if (i < right) _quickSortAsc(items, i, right)
   }
   return items
 }
 
-const quickSortDesc = (items, left, right) => {
+const _quickSortDesc = (items, left, right) => {
   if (items.length > 1) {
     let pivot = items.get(((right + left) / 2) | 0.5),
       i = left,
@@ -1047,8 +1047,8 @@ const quickSortDesc = (items, left, right) => {
         j--
       }
     }
-    if (left < i - 1) quickSortDesc(items, left, i - 1)
-    if (i < right) quickSortDesc(items, i, right)
+    if (left < i - 1) _quickSortDesc(items, left, i - 1)
+    if (i < right) _quickSortDesc(items, i, right)
   }
   return items
 }
@@ -1074,30 +1074,30 @@ const merge = (left, right, callback) => {
   return out
 }
 
-const mergeSort = (array, callback) => {
+const _mergeSort = (array, callback) => {
   const half = (array.length / 2) | 0.5
   if (array.length < 2) {
     return array
   }
   const left = array.splice(0, half)
-  return merge(mergeSort(left, callback), mergeSort(array, callback), callback)
+  return merge(_mergeSort(left, callback), _mergeSort(array, callback), callback)
 }
 
-const binarySearch = tailCallOptimisedRecursion(
+const _binarySearch = _tailCallOptimisedRecursion(
   (arr, target, by, greather, start, end) => {
     if (start > end) return undefined
     const index = ((start + end) / 2) | 0.5
     const current = arr.get(index)
     if (current === undefined) return undefined
-    const identity = by(current)
-    if (identity === target) return current
+    const _Identity = by(current)
+    if (_Identity === target) return current
     if (greather(current))
-      return binarySearch(arr, target, by, greather, start, index - 1)
-    else return binarySearch(arr, target, by, greather, index + 1, end)
+      return _binarySearch(arr, target, by, greather, start, index - 1)
+    else return _binarySearch(arr, target, by, greather, index + 1, end)
   }
 )
-const Identity = current => current
-class Group {
+const _Identity = current => current
+class _Group {
   constructor() {
     this.items = {}
   }
@@ -1137,7 +1137,7 @@ class Group {
   }
 }
 
-const isEqual = (a, b) => {
+const _isEqual = (a, b) => {
   if (a === b) return true
   if (a && b && typeof a == 'object' && typeof b == 'object') {
     if (a.constructor !== b.constructor) return false
@@ -1146,19 +1146,19 @@ const isEqual = (a, b) => {
       length = a.length
       if (length != b.length) return false
       for (i = length; i-- !== 0; )
-        if (!isEqual(a.get(i), b.get(i))) return false
+        if (!_isEqual(a.get(i), b.get(i))) return false
       return true
     }
     if (Array.isArray(a)) {
       length = a.length
       if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (!isEqual(a[i], b[i])) return false
+      for (i = length; i-- !== 0; ) if (!_isEqual(a[i], b[i])) return false
       return true
     }
     if (a instanceof Map && b instanceof Map) {
       if (a.size !== b.size) return false
       for (i of a.entries()) if (!b.has(i[0])) return false
-      for (i of a.entries()) if (!isEqual(i[1], b.get(i[0]))) return false
+      for (i of a.entries()) if (!_isEqual(i[1], b.get(i[0]))) return false
       return true
     }
     if (a instanceof Set && b instanceof Set) {
@@ -1185,7 +1185,7 @@ const isEqual = (a, b) => {
       if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
     for (i = length; i-- !== 0; ) {
       let key = keys[i]
-      if (!isEqual(a[key], b[key])) return false
+      if (!_isEqual(a[key], b[key])) return false
     }
     return true
   }
@@ -1193,7 +1193,7 @@ const isEqual = (a, b) => {
   return a !== a && b !== b
 }
 
-class Shadow {
+class _Shadow {
   isShortCircuited() {
     return true
   }
@@ -1202,6 +1202,6 @@ for (const method of Brrr.from([
   ...Object.getOwnPropertyNames(Brrr),
   ...Object.getOwnPropertyNames(Brrr.prototype),
 ]).without('prototype', 'isShortCircuited', 'constructor').items) {
-  Shadow.prototype[method] = () => shadow
+  _Shadow.prototype[method] = () => _Shadow
 }
-const shadow = Object.freeze(new Shadow())
+const _shadow = Object.freeze(new _Shadow())

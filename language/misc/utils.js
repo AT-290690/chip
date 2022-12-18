@@ -32,14 +32,25 @@ const _set = (array, index, value) => array.set(index, value)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
-export const brrrHelpers = `const sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
-const isIterable = iter =>
+export const brrrHelpers = `/**  Helper functions */
+/** 
+  If Type(x) is different from Type(y), return false.
+  If Type(x) is Number, then
+  If x is NaN and y is NaN, return true.
+  If x is +0 and y is -0, return true.
+  If x is -0 and y is +0, return true.
+  If x is the same Number value as y, return true.
+  Return false.
+  Return SameValueNonNumber(x, y).
+*/
+const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
+const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+const _isIterable = iter =>
   iter === null || iter === undefined
     ? false
     : typeof iter[Symbol.iterator] === 'function'
 
-const tailCallOptimisedRecursion =
+const _tailCallOptimisedRecursion =
   func =>
   (...args) => {
     let result = func(...args)
@@ -47,29 +58,29 @@ const tailCallOptimisedRecursion =
     return result
   }
 
-const flatten = (collection, levels, flat) =>
+const _flatten = (collection, levels, flat) =>
   collection.reduce((acc, current) => {
     if (Brrr.isBrrr(current)) acc.push(...flat(current, levels))
     else acc.push(current)
     return acc
   }, [])
 
-const toMatrix = (...args) => {
+const _toMatrix = (...args) => {
   if (args.length === 0) return
   const dimensions = new Brrr().with(...args)
   const dim = dimensions.chop()
   const arr = new Brrr()
-  for (let i = 0; i < dim; ++i) arr.set(i, toMatrix(...dimensions))
+  for (let i = 0; i < dim; ++i) arr.set(i, _toMatrix(...dimensions))
   return arr
 }
 
-const toArrayDeep = entity => {
+const _toArrayDeep = entity => {
   return Brrr.isBrrr(entity)
     ? entity
         .map(item =>
           Brrr.isBrrr(item)
             ? item.some(Brrr.isBrrr)
-              ? toArrayDeep(item)
+              ? _toArrayDeep(item)
               : item.toArray()
             : item
         )
@@ -77,23 +88,23 @@ const toArrayDeep = entity => {
     : entity
 }
 
-const toObjectDeep = entity => {
+const _toObjectDeep = entity => {
   return Brrr.isBrrr(entity)
     ? entity
         .map(item =>
           Brrr.isBrrr(item)
             ? item.some(Brrr.isBrrr)
-              ? toObjectDeep(item)
+              ? _toObjectDeep(item)
               : item.toObject()
             : item
         )
         .toObject()
     : entity
 }
-const toShapeDeep = (entity, out = []) => {
+const _toShapeDeep = (entity, out = []) => {
   if (Brrr.isBrrr(entity.get(0))) {
     entity.forEach(item => {
-      out.push(toShapeDeep(item))
+      out.push(_toShapeDeep(item))
     })
   } else {
     out = [entity.length]
@@ -101,7 +112,7 @@ const toShapeDeep = (entity, out = []) => {
   return out
 }
 
-const quickSortAsc = (items, left, right) => {
+const _quickSortAsc = (items, left, right) => {
   if (items.length > 1) {
     let pivot = items.get(((right + left) / 2) | 0.5),
       i = left,
@@ -115,13 +126,13 @@ const quickSortAsc = (items, left, right) => {
         j--
       }
     }
-    if (left < i - 1) quickSortAsc(items, left, i - 1)
-    if (i < right) quickSortAsc(items, i, right)
+    if (left < i - 1) _quickSortAsc(items, left, i - 1)
+    if (i < right) _quickSortAsc(items, i, right)
   }
   return items
 }
 
-const quickSortDesc = (items, left, right) => {
+const _quickSortDesc = (items, left, right) => {
   if (items.length > 1) {
     let pivot = items.get(((right + left) / 2) | 0.5),
       i = left,
@@ -135,8 +146,8 @@ const quickSortDesc = (items, left, right) => {
         j--
       }
     }
-    if (left < i - 1) quickSortDesc(items, left, i - 1)
-    if (i < right) quickSortDesc(items, i, right)
+    if (left < i - 1) _quickSortDesc(items, left, i - 1)
+    if (i < right) _quickSortDesc(items, i, right)
   }
   return items
 }
@@ -162,30 +173,30 @@ const merge = (left, right, callback) => {
   return out
 }
 
-const mergeSort = (array, callback) => {
+const _mergeSort = (array, callback) => {
   const half = (array.length / 2) | 0.5
   if (array.length < 2) {
     return array
   }
   const left = array.splice(0, half)
-  return merge(mergeSort(left, callback), mergeSort(array, callback), callback)
+  return merge(_mergeSort(left, callback), _mergeSort(array, callback), callback)
 }
 
-const binarySearch = tailCallOptimisedRecursion(
+const _binarySearch = _tailCallOptimisedRecursion(
   (arr, target, by, greather, start, end) => {
     if (start > end) return undefined
     const index = ((start + end) / 2) | 0.5
     const current = arr.get(index)
     if (current === undefined) return undefined
-    const identity = by(current)
-    if (identity === target) return current
+    const _Identity = by(current)
+    if (_Identity === target) return current
     if (greather(current))
-      return binarySearch(arr, target, by, greather, start, index - 1)
-    else return binarySearch(arr, target, by, greather, index + 1, end)
+      return _binarySearch(arr, target, by, greather, start, index - 1)
+    else return _binarySearch(arr, target, by, greather, index + 1, end)
   }
 )
-const Identity = current => current
-class Group {
+const _Identity = current => current
+class _Group {
   constructor() {
     this.items = {}
   }
@@ -225,7 +236,7 @@ class Group {
   }
 }
 
-const isEqual = (a, b) => {
+const _isEqual = (a, b) => {
   if (a === b) return true
   if (a && b && typeof a == 'object' && typeof b == 'object') {
     if (a.constructor !== b.constructor) return false
@@ -234,19 +245,19 @@ const isEqual = (a, b) => {
       length = a.length
       if (length != b.length) return false
       for (i = length; i-- !== 0; )
-        if (!isEqual(a.get(i), b.get(i))) return false
+        if (!_isEqual(a.get(i), b.get(i))) return false
       return true
     }
     if (Array.isArray(a)) {
       length = a.length
       if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (!isEqual(a[i], b[i])) return false
+      for (i = length; i-- !== 0; ) if (!_isEqual(a[i], b[i])) return false
       return true
     }
     if (a instanceof Map && b instanceof Map) {
       if (a.size !== b.size) return false
       for (i of a.entries()) if (!b.has(i[0])) return false
-      for (i of a.entries()) if (!isEqual(i[1], b.get(i[0]))) return false
+      for (i of a.entries()) if (!_isEqual(i[1], b.get(i[0]))) return false
       return true
     }
     if (a instanceof Set && b instanceof Set) {
@@ -273,7 +284,7 @@ const isEqual = (a, b) => {
       if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
     for (i = length; i-- !== 0; ) {
       let key = keys[i]
-      if (!isEqual(a[key], b[key])) return false
+      if (!_isEqual(a[key], b[key])) return false
     }
     return true
   }
@@ -281,7 +292,7 @@ const isEqual = (a, b) => {
   return a !== a && b !== b
 }
 
-class Shadow {
+class _Shadow {
   isShortCircuited() {
     return true
   }
@@ -290,9 +301,9 @@ for (const method of Brrr.from([
   ...Object.getOwnPropertyNames(Brrr),
   ...Object.getOwnPropertyNames(Brrr.prototype),
 ]).without('prototype', 'isShortCircuited', 'constructor').items) {
-  Shadow.prototype[method] = () => shadow
+  _Shadow.prototype[method] = () => _Shadow
 }
-const shadow = Object.freeze(new Shadow())`
+const _shadow = Object.freeze(new _Shadow())`
 export const logBoldMessage = msg => console.log('\x1b[1m', msg)
 export const logErrorMessage = msg =>
   console.log('\x1b[31m', '\x1b[1m', msg, '\x1b[0m')
