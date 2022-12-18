@@ -1,8 +1,9 @@
 import { decodeBase64 } from './language/misc/compression.js'
 import { compileToJs } from './language/core/compiler.js'
-import { treeShake, languageUtilsString } from './language/misc/utils.js'
+import { treeShake, languageUtilsString, brrrHelpers } from './language/misc/utils.js'
 import { wrapInBody, removeNoCode } from './language/misc/helpers.js'
 import { parse } from './language/core/parser.js'
+import Brrr from './language/extentions/Brrr.js'
 const encoding = new URLSearchParams(location.search).get('s')
 if (encoding) {
   const inlined = wrapInBody(
@@ -16,6 +17,8 @@ if (encoding) {
       document.body.appendChild(canvasContainer)
       const VOID = null
       const LOGGER = () => () => {}
+      ${Brrr.toString()}
+      ${brrrHelpers}
       ${languageUtilsString}
       ${LIBRARY}
       ${body}

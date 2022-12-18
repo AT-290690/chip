@@ -32,7 +32,7 @@ const _set = (array, index, value) => array.set(index, value)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
-const brrrHelpers = `const sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
+export const brrrHelpers = `const sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 const isIterable = iter =>
   iter === null || iter === undefined
