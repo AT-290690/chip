@@ -5,7 +5,7 @@ import { STD } from '../../language/extentions/extentions.js'
 import { VOID } from '../../language/core/tokens.js'
 import { LZUTF8 } from '../../language/libs/lz-utf8.js'
 import { removeNoCode } from '../../language/misc/helpers.js'
-
+import Brrr from '../../language/extentions/Brrr.js'
 export const HyperLightEditor = (
   parent,
   { elements, onResize, onPopupResize, initialValue, showPopUpOnLoad }
@@ -83,7 +83,6 @@ export const HyperLightEditor = (
         const current = popup.getValue()
         top = `${current ? current + '\n' : ''};; ${count++} ${comment}\n`
       }
-
       popup.setValue(
         `${top}${
           msg !== VOID
@@ -91,7 +90,7 @@ export const HyperLightEditor = (
               ? `"${msg}"`
               : typeof msg === 'function'
               ? '-> []'
-              : JSON.stringify(msg, null, space)
+              : JSON.stringify(msg.constructor.name === 'Brrr' ? msg.items : msg, null, space)
                   .replaceAll('[', '.: [')
                   .replaceAll('{', ':: [')
                   .replaceAll('}', ']')

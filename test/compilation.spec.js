@@ -6,7 +6,7 @@ describe('compilation should work as expected', () => {
       <- ["CONVERT"] [LIBRARY];
   <- ["boolean"] [CONVERT];
   := [type of thing; -> [entity; ? [== [entity; void]; void; . [entity; "constructor"; "name"]]]];
-  >> [.: [0; "0"; boolean [0]; :: ["0"; 0]; .: [0]; -> [0]; void]; -> [x; i; a; .= [a; i; type of thing [x]]]];
+  >> [.: [0; "0"; boolean [0]; :: ["0"; 0]; .: [0]; -> [0]; void]; -> [x; i; a; :.= [a; i; type of thing [x]]]];
       `
     deepEqual(runFromInterpreted(source), runFromCompiled(source))
   })
@@ -63,7 +63,7 @@ describe('compilation should work as expected', () => {
       <- ["max"; "infinity"] [MATH];
       ~= [loop; -> [i; nums; maxGlobal; maxSoFar;
           ? [< [i; .:? [nums]]; .. [
-          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; . [nums; i]]]]]];
+          = [maxGlobal; max [maxGlobal; = [maxSoFar; max [0; + [maxSoFar; :. [nums; i]]]]]];
           loop [= [i; + [i; 1]]; nums; maxGlobal; maxSoFar]];
           maxGlobal]]]
         [0; .: [1; -2; 10; -5; 12; 3; -2; 3; -199; 10]; * [infinity; -1]; * [infinity; -1]]`
@@ -75,8 +75,8 @@ describe('compilation should work as expected', () => {
       <- ["sum"] [MATH];
       <- ["range"] [ARRAY];
       := [NUMBERS; range [1; 100]];
-      := [first; . [NUMBERS; 0]];
-      := [last; . [NUMBERS; - [.:? [NUMBERS]; 1]]];
+      := [first; :. [NUMBERS; 0]];
+      := [last; :. [NUMBERS; - [.:? [NUMBERS]; 1]]];
       := [median; + [first;
       - [* [last; * [+ [1; last]; 0.5]];
           * [first; * [+ [1; first]; 0.5]]]]];
@@ -130,20 +130,20 @@ describe('compilation should work as expected', () => {
   })
   it('>> and << should work', () => {
     const source1 = `
-      := [out; .: []];
-      >> [.: [1; 2; 3; 4]; -> [x; i; a; .= [out; i; * [x; 10]]]];
-      << [.: [10; 20; 30]; -> [x; i; a;.= [out; i; - [. [out; i]; * [x; 0.1]]]]];
-      >> [out; -> [x; i; a; .= [out; i; + [x; i]]]];
-      out;
+    := [out; .: []];
+    >> [.: [1; 2; 3; 4]; -> [x; i; a; .:= [out; * [x; 10]]]];
+    << [.: [10; 20; 30]; -> [x; i; a; .:= [out; - [:. [out; i]; * [x; 0.1]]]]];
+    >> [out; -> [x; i; a; :.= [out; i; + [x; i]]]];
+    out;
     `
     deepEqual(runFromInterpreted(source1), runFromCompiled(source1))
     const source2 = `
       |> [
         .: [1; 2; 3; 4];
-        >> [-> [x; i; a; .= [a; i; * [x; 10]]]];
-        << [-> [x; i; a; .= [a; i; - [. [a; i]; * [x; 0.1]]]]];
-        >> [-> [x; i; a; .= [a; i; + [x; i]]]];
-        << [-> [x; i; a; .= [a; i; + [. [a; i]; i; 1]]]];
+        >> [-> [x; i; a; :.= [a; i; * [x; 10]]]];
+        << [-> [x; i; a; :.= [a; i; - [:. [a; i]; * [x; 0.1]]]]];
+        >> [-> [x; i; a; :.= [a; i; + [x; i]]]];
+        << [-> [x; i; a; :.= [a; i; + [:. [a; i]; i; 1]]]];
       ]
       `
     deepEqual(runFromInterpreted(source2), runFromCompiled(source2))

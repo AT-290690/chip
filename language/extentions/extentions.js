@@ -1,5 +1,5 @@
 import { VOID } from '../core/tokens.js'
-
+import Brrr from './Brrr.js'
 export const protolessModule = methods => {
   const env = Object.create(null)
   for (const method in methods) env[method] = methods[method]
@@ -208,7 +208,7 @@ export const LIBRARY = {
         return typeof value === 'object' ? JSON.stringify(value) : String(value)
       else if (value === null || value === undefined) return VOID
       else if (type === '.:') {
-        if (Array.isArray(value)) return value
+        if (Brrr.isBrrr(value)) return value
         else if (typeof value === 'string') return [...value]
         else if (typeof value === 'number')
           return [...String(value)].map(Number)
@@ -435,30 +435,13 @@ export const LIBRARY = {
   ARRAY: {
     NAME: 'ARRAY',
     compact: arr => {
-      return arr.filter(Boolean)
+      return arr.compact(Boolean)
     },
     makearray: (...items) => {
       return items
     },
-    makematrix: (...dimensions) => {
-      if (dimensions.length > 0) {
-        const dim = dimensions[0]
-        const rest = dimensions.slice(1)
-        const arr = []
-        for (let i = 0; i < dim; ++i) arr[i] = LIBRARY.ARRAY.makematrix(...rest)
-        return arr
-      } else return VOID
-    },
-    unique: entity => {
-      const set = new Set()
-      return entity.reduce((acc, item) => {
-        if (!set.has(item)) {
-          set.add(item)
-          acc.push(item)
-        }
-        return acc
-      }, [])
-    },
+    makematrix: (...dimensions) => Brrr.matrix(...dimensions),
+    unique: entity => entity.unique(),
     indexediteration: (entity, fn) => entity.forEach((x, i, arr) => fn(i)),
     forof: (entity, fn) => entity.forEach((x, i, arr) => fn(x)),
     each: (entity, fn) => entity.forEach((x, i, arr) => fn(x, i)),
@@ -468,14 +451,8 @@ export const LIBRARY = {
         entity[i] = callback(entity[i], i, entity)
       return entity
     },
-    tail: entity => {
-      entity.shift()
-      return entity
-    },
-    head: entity => {
-      entity.pop()
-      return entity
-    },
+    tail: entity => entity.tail(),
+    head: entity => entity.head(),
     map: (entity, callback) => entity.map(callback),
     filter: (entity, callback) => entity.filter(callback),
     reduce: (entity, callback, out) => entity.reduce(callback, out),
@@ -496,6 +473,12 @@ export const LIBRARY = {
       entity.push(item)
       return item
     },
+    push: (entity, ...args) => entity.push(...args),
+    pop: entity => entity.pop(),
+    prepend: (entity, item) => {
+      entity.unshift(item)
+      return entity
+    },
     append: (entity, item) => {
       entity.push(item)
       return entity
@@ -510,49 +493,40 @@ export const LIBRARY = {
     },
     includes: (entity, arg) => +entity.includes(arg),
     isarray: entity => +Array.isArray(entity),
+    unshift: (entity, ...args) => entity.unshift(...args),
+    shift: entity => entity.shift(),
     fill: (entity, filling) => entity.fill(filling),
     findindex: (entity, callback) => entity.findIndex(callback),
     indexof: (entity, item) => entity.indexOf(item),
-    splitnewline: str => str.split('\n'),
-    splitspaces: str => str.split(' '),
-    split: (str, separator) => str.split(separator),
+    splitnewline: str => Brrr.from(str.split('\n')),
+    splitspaces: str => Brrr.from(str.split(' ')),
+    split: (str, separator) => Brrr.from(str.split(separator)),
     join: (entity, separator) => entity.join(separator),
     flat: (entity, level) => entity.flat(level),
     flatMap: (entity, callback) => entity.flatMap(callback),
     sort: (entity, callback) => entity.sort(callback),
     slice: (entity, start, end) => entity.slice(start, end),
     splice: (entity, ...args) => entity.splice(...args),
-    partition: (entity, groups = 1) => {
-      return entity.reduce((acc, _, index, arr) => {
-        if (index % groups === 0) {
-          const part = []
-          for (let i = 0; i < groups; ++i) {
-            const current = arr[index + i]
-            if (current !== undefined) part.push(current)
-          }
-          acc.push(part)
-        }
-        return acc
-      }, [])
-    },
+    partition: (entity, groups = 1) => entity.partition(groups),
     shuffle: array => {
+      array = array.toArray()
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
         ;[array[i], array[j]] = [array[j], array[i]]
       }
-      return array
+      return Brrr.from(array)
     },
-    zeroes: size => new Array(size).fill(0),
-    ones: size => new Array(size).fill(1),
+    zeroes: size => Brrr.zeroes(size),
+    ones: size => Brrr.ones(size),
     range: (start, end, step = 1) => {
-      const arr = []
-      if (start > end) for (let i = start; i >= end; i -= 1) arr.push(i * step)
-      else for (let i = start; i <= end; i += 1) arr.push(i * step)
-      return arr
+      const arr = new Brrr()
+      if (start > end) for (let i = start; i >= end; i -= 1) arr.append(i * step)
+      else for (let i = start; i <= end; i += 1) arr.append(i * step)
+      return arr.balance()
     },
     at: (entity, index) => entity.at(index),
-    first: entity => entity[0],
-    last: entity => entity[entity.length - 1],
+    first: entity => entity.at(0),
+    last: entity => entity.at(entity.length - 1),
   },
   CANVAS: {
     NAME: 'CANVAS',

@@ -3,14 +3,14 @@ import { cell, parse } from '../core/parser.js'
 import { tokens } from '../core/tokens.js'
 import { STD, protolessModule } from '../extentions/extentions.js'
 import { removeNoCode, wrapInBody } from './helpers.js'
-
+import Brrr from '../extentions/Brrr.js'
 export const languageUtilsString = `const _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result };
 const _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 const _spread = (items) => Array.isArray(items[0]) ? items.reduce((acc, item) => [...acc, ...item], []) : items.reduce((acc, item) => ({ ...acc, ...item }), {});
 const _scanLeft = (array, callback) => { for (let i = 0; i < array.length; ++i) callback(array[i], i, array); return array } 
 const _scanRight = (array, callback) => {  for (let i = array.length - 1; i >= 0; --i) callback(array[i], i, array); return array }
-const _mapLeft = (array, callback, copy = []) => { for (let i = 0; i < array.length; ++i) copy[i] = array[i] = callback(array[i], i, array); return array } 
-const _mapRight = (array, callback, copy = []) => {  for (let i = array.length - 1; i >= 0; --i) copy[i] = array[i] = callback(array[i], i, array); return array }
+const _mapLeft = (array, callback, copy = new Brrr()) => { for (let i = 0; i < array.length; ++i) copy.set(i, callback(array.at(i), i, array)); return array.balance() } 
+const _mapRight = (array, callback, copy = new Brrr()) => {  for (let i = array.length - 1; i >= 0; --i) copy.set(i, callback(array.at(i), i, array)); return array.balance() } 
 const _filter = (array, callback) => array.filter(callback) 
 const _reduceLeft = (array, callback, out = []) => array.reduce(callback, out)
 const _reduceRight = (array, callback, out = []) => array.reduceRight(callback, out)
@@ -25,6 +25,7 @@ const _popget = (array) => array.pop()
 const _length = (array) => array.length
 const _split = (string, separator) => string.split(separator)
 const _at = (array, index) => array.at(index)
+const _set = (array, index, value) => array.set(index, value)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
@@ -157,6 +158,7 @@ export const interpredHtml = (
 ) => {
   const inlined = wrapInBody(removeNoCode(source))
   return `<style>body { background: black } </style>
+  ${Brrr.toString()}
   ${scripts}
 <script type="module">
 import { exe } from '${utils}'; 

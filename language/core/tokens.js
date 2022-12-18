@@ -1,4 +1,5 @@
 import evaluate from './interpreter.js'
+import Brrr from '../extentions/brrr.js'
 export const VOID = undefined
 export const pipe =
   (...fns) =>
@@ -197,7 +198,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to >-')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of >- must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -208,7 +209,7 @@ const tokens = {
     if (args.length !== 3)
       throw new TypeError('Invalid number of arguments to >_')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of >_ must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -219,7 +220,7 @@ const tokens = {
     if (args.length !== 3)
       throw new TypeError('Invalid number of arguments to _<')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of _< must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -230,52 +231,50 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to >>')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of >> must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of >> must be an -> []')
-    for (let i = 0; i < array.length; ++i) callback(array[i], i, array)
-    return array
+    return array.scan(callback, 1)
   },
   ['>>.']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to >>.')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of >>. must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of >>. must be an -> []')
-    const copy = []
+    const copy = new Brrr()
     for (let i = 0; i < array.length; ++i)
-      copy[i] = callback(array[i], i, array)
+      copy.set(i, callback(array.get(i), i, array))
     return copy
   },
   ['<<']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to <<')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of << must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of << must be an -> []')
-    for (let i = array.length - 1; i >= 0; --i) callback(array[i], i, array)
-    return array
+    return array.scan(callback, -1)
   },
   ['.<<']: (args, env) => {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to .<<')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .<< must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of .<< must be an -> []')
-    const copy = []
+    const copy = new Brrr()
     for (let i = array.length - 1; i >= 0; --i)
-      copy[i] = callback(array[i], i, array)
+      copy.set(i, callback(array.get(i), i, array))
     return copy
   },
   ['@']: (args, env) => {
@@ -295,7 +294,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to ><>')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of ><> must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -306,7 +305,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to <><')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of <>< must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -317,7 +316,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to |:|')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of |:| must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -328,7 +327,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to |.|')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of |.| must be an .: []')
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
@@ -339,7 +338,7 @@ const tokens = {
     if (args.length !== 1)
       throw new TypeError('Invalid number of arguments to .>')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .> must be an .: []')
     return array.at(0)
   },
@@ -347,9 +346,35 @@ const tokens = {
     if (args.length !== 1)
       throw new TypeError('Invalid number of arguments to .<')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .< must be an .: []')
     return array.at(-1)
+  },
+  [':.']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to :.')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of :. must be an .: []')
+    const index =  evaluate(args[1], env)
+    if (!Number.isInteger(index)) 
+      throw new TypeError('Second argument of :. must be a number')
+    if (!array.isInBounds(Math.abs(index)))
+     throw new TypeError(`Index is out of bounds [${index}] <> .: [${array.length}]`)
+    return array.at(index)
+  },
+  [':.=']: (args, env) => {
+    if (args.length !== 3)
+      throw new TypeError('Invalid number of arguments to :.=')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of  :.= must be an .: []')
+    const index =  evaluate(args[1], env)
+    if (!Number.isInteger(index)) 
+      throw new TypeError('Second argument of  :.= must be a number')
+    if (!array.isInBounds(Math.abs(index)))
+     throw new TypeError(`Index is out of bounds [${index}] <> .: [${array.length}]`)
+    return array.set(index, evaluate(args[2], env))
   },
   // ['</>']: (args, env) => {
   //   const type = evaluate(args[0], env)
@@ -472,7 +497,7 @@ const tokens = {
     const toSpread = evaluate(first, env)
     if (typeof toSpread !== 'object')
       throw new SyntaxError('... can only be used on .: or ::')
-    return Array.isArray(toSpread)
+    return Brrr.isBrrr(toSpread)
       ? [
           ...toSpread,
           ...rest.reduce((acc, item) => [...acc, ...evaluate(item, env)], []),
@@ -489,7 +514,7 @@ const tokens = {
     if (args.length !== 2)
       throw new TypeError('Invalid number of arguments to .:=')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:= must be an .: []')
     array.push(evaluate(args[1], env))
     return array
@@ -498,7 +523,7 @@ const tokens = {
     if (args.length !== 1)
       throw new TypeError('Invalid number of arguments to .:!=')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:!= must be an .: []')
     array.pop()
     return array
@@ -507,7 +532,7 @@ const tokens = {
     if (args.length !== 1)
       throw new TypeError('Invalid number of arguments to .:<-')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:<- must be an .: []')
     return array.pop()
   },
@@ -535,7 +560,7 @@ const tokens = {
       }, [])
     )
   },
-  ['.:']: (args, env) => args.map(item => extract(item, env)),
+  ['.:']: (args, env) => Brrr.from(args.map(item => extract(item, env))),
   ['<-']: (args, env) => exp => {
     args.forEach(arg => {
       const method = arg.value
@@ -560,7 +585,7 @@ const tokens = {
     const separator = args[1] ? evaluate(args[1], env) : ''
     if (args[1] && typeof separator !== 'string')
       throw new TypeError('Second argument of ./: must be an ""')
-    return string.split(separator)
+    return Brrr.from(string.split(separator))
   },
   ['#']: (args, env) => {
     if (!args.length) throw new SyntaxError('Invalid use of operation #')
@@ -582,7 +607,7 @@ const tokens = {
     if (args.length !== 1)
       throw new TypeError('Invalid number of arguments to .:?')
     const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
+    if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:? must be an .: []')
     return array.length
   },
