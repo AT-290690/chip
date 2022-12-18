@@ -140,17 +140,26 @@ const dfs = (tree, locals) => {
       //   return `document.createElement(${dfs(tree.args[0], locals)})`
       case '.:':
         return 'Brrr.of(' + tree.args.map(x => dfs(x, locals)).join(',') + ')'
-      case ':.=':
+      case '..:=':
         return `_set(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`
       case '.:=':
-        return `_push(${dfs(tree.args[0], locals)}, ${dfs(
+        return `_append(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )});`
+    case ':.=':
+      return `_prepend(${dfs(tree.args[0], locals)}, ${dfs(
+        tree.args[1],
+        locals
+      )});`
       case '.:!=':
-        return `_pop(${dfs(tree.args[0], locals)});`
+        return `_head(${dfs(tree.args[0], locals)});`
+      case ':.!=':
+        return `_tail(${dfs(tree.args[0], locals)});`
       case '.:<-':
-        return `_popget(${dfs(tree.args[0], locals)});`
+        return `_cut(${dfs(tree.args[0], locals)});`
+      case '->.:':
+        return `_chop(${dfs(tree.args[0], locals)});`
       case './:':
         return `_split(${dfs(tree.args[0], locals)}, ${
           tree.args[1] ? dfs(tree.args[1], locals) : '""'

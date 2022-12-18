@@ -19,11 +19,14 @@ const _findRight = (array, callback) => array.findLast(callback)
 const _repeat = (n, callback) => { let out; for (let i = 0; i < n; ++i) out = callback(); return out }
 const _every = (array, callback) => array.every(callback)
 const _some = (array, callback) => array.some(callback)
-const _push = (array, value) => { array.push(value); return array }
-const _pop = (array) => { array.pop(); return array }
-const _popget = (array) => array.pop()
+const _append = (array, value) => array.append(value)
+const _prepemd = (array, value) => array.prepend(value)
+const _head = (array) => array.head()
+const _tail = (array) => array.tail()
+const _cut = (array) => array.cut()
+const _chop= (array) => array.chop()
 const _length = (array) => array.length
-const _split = (string, separator) => string.split(separator)
+const _split = (string, separator) => Brrr.from(string.split(separator))
 const _at = (array, index) => array.at(index)
 const _set = (array, index, value) => array.set(index, value)
 const call = (x, fn) => fn(x)
