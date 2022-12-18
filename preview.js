@@ -4,23 +4,28 @@ import { treeShake, languageUtilsString, brrrHelpers } from './language/misc/uti
 import { wrapInBody, removeNoCode } from './language/misc/helpers.js'
 import { parse } from './language/core/parser.js'
 import Brrr from './language/extentions/Brrr.js'
+
+
 const encoding = new URLSearchParams(location.search).get('s')
 if (encoding) {
   const inlined = wrapInBody(
     removeNoCode(decodeBase64(decodeURIComponent(encoding)))
   )
+
   const { body, modules } = compileToJs(parse(inlined))
-  const LIBRARY = treeShake(modules)
-  const script = document.createElement('script')
-  const s = `
-  ${Brrr.toString()}
-  ${brrrHelpers}
-  const VOID = null
-  const LOGGER = () => () => {}
-  ${languageUtilsString}
-  ${LIBRARY}
-  ;(() => { ${body} }) ()
-  `
+  console.log(body)
+  const lib = treeShake(modules)
+  const s = 
+`${Brrr.toString()}
+${brrrHelpers}
+const VOID = null;
+const LOGGER = () => () => {}
+${languageUtilsString}
+${lib}
+;(() => { ${body} })()`
+const script = document.createElement('script')
+
   script.innerHTML = s
   document.body.appendChild(script)
 }
+
