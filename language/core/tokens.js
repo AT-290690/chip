@@ -311,11 +311,11 @@ const tokens = {
      return array.group(callback)
   },
   ['.:@']: (args, env) => {
-    if (args.length !== 2)
+    if (args.length !== 3)
       throw new TypeError('Invalid number of arguments to .:@')
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
-      throw new TypeError('First argument of ..:@ must be an .: []')
+      throw new TypeError('First argument of .:@ must be an .: []')
       const n = evaluate(args[1], env)
     if (typeof n !== 'number' || n <= 0)
       throw new TypeError('Second argument of .:@ must be a positive number')
