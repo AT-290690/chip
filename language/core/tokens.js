@@ -322,7 +322,7 @@ const tokens = {
     const dir = evaluate(args[2], env)
     if (dir !== -1 && dir !== 1)
       throw new TypeError('Third argument of .:@ must be either -1 or 1')
-     return array.rotate(dir)
+     return array.rotate(n, dir)
   },
   ['@']: (args, env) => {
     if (args.length !== 2)

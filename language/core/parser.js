@@ -35,7 +35,7 @@ const importArgs = expr =>
 const pipeArgs = expr => {
   const [first, ...rest] = expr.args
   if (!rest.every(x => x.class === 'function' && x.operator.name))
-    throw new SyntaxError(`Non function arguments passed to a Pipe`)
+    throw new SyntaxError(`Following arguments of|> [] must be -> []`)
 
   // if (!rest.every(x => x.operator.name[0] === '|'))
   //   throw new SyntaxError(`Pipe functions have to start with |`)
