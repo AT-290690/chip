@@ -136,7 +136,7 @@ const tokens = {
   },
   ['??']: (args, env) => {
     if (args.length === 0)
-      throw new TypeError('Invalid number of arguments  to ??')
+      throw new TypeError('Invalid number of arguments  to ?? []')
     const resolve = (arg, count) => {
       const val = evaluate(arg, env)
       if (val !== VOID) return val
@@ -146,16 +146,22 @@ const tokens = {
   },
   ['..']: (args, env) => {
     let value = VOID
+    if (args.length <= 1)
+      throw new RangeError(
+        'Using .. [] with less than 2 arguments is redundant'
+      )
     args.forEach(arg => (value = evaluate(arg, env)))
     return value
   },
   [':=']: (args, env) => {
-    if (!args.length || args?.[0].type !== 'word' || args.length > 2)
-      throw new SyntaxError('Invalid use of operation :=')
+    if (!args.length || args.length > 2)
+      throw new SyntaxError('Invalid number of arguments for := []')
+    if (args[0].type !== 'word')
+      throw new SyntaxError('First argument of := [] must be word')
     const name = args[0].name
     if (name.includes('.') || name.includes('-'))
       throw new SyntaxError(
-        'Invalid use of operation := (variable name must not contain . or -)'
+        'Invalid use of operation := [] [variable name must not contain . or -]'
       )
     const value =
       args.length === 1 ? VOID : evaluate(args[args.length - 1], env)
@@ -163,17 +169,19 @@ const tokens = {
     return value
   },
   ['->']: (args, env) => {
-    if (!args.length) throw new SyntaxError('Functions need a body')
+    if (!args.length) throw new SyntaxError('-> [] need a body')
     const argNames = args.slice(0, args.length - 1).map(expr => {
       if (expr.type !== 'word')
-        throw new TypeError('Argument names must be words')
+        throw new TypeError('Argument names of -> [] must be words')
       return expr.name
     })
     const body = args[args.length - 1]
     return (...args) => {
       if (args.length !== argNames.length)
         throw new TypeError(
-          'Invalid number of arguments near ("' + argNames.join('; ') + '")'
+          'Invalid number of arguments for -> [] near ["' +
+            argNames.join('; ') +
+            '"]'
         )
       const localEnv = Object.create(env)
       for (let i = 0; i < args.length; ++i) localEnv[argNames[i]] = args[i]
@@ -181,8 +189,10 @@ const tokens = {
     }
   },
   ['=']: (args, env) => {
-    if (args.length !== 2 || args[0].type !== 'word')
-      throw new SyntaxError('Invalid use of operation =')
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments for = []')
+    if (args[0].type !== 'word')
+      throw new TypeError('Argument for = [] must be words')
     const entityName = args[0].name
     const value = evaluate(args[1], env)
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope))
@@ -191,7 +201,7 @@ const tokens = {
         return value
       }
     throw new ReferenceError(
-      `Tried setting an undefined variable: ${entityName}`
+      `Tried setting an undefined variable: ${entityName} using = []`
     )
   },
   ['>-']: (args, env) => {
@@ -297,7 +307,7 @@ const tokens = {
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of ::.: must be an -> []')
-     return array.mergeSort(callback)
+    return array.mergeSort(callback)
   },
   ['.::']: (args, env) => {
     if (args.length !== 2)
@@ -308,7 +318,7 @@ const tokens = {
     const callback = evaluate(args[1], env)
     if (typeof callback !== 'function')
       throw new TypeError('Second argument of .:: must be an -> []')
-     return array.group(callback)
+    return array.group(callback)
   },
   ['.:@']: (args, env) => {
     if (args.length !== 3)
@@ -316,13 +326,13 @@ const tokens = {
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:@ must be an .: []')
-      const n = evaluate(args[1], env)
+    const n = evaluate(args[1], env)
     if (typeof n !== 'number' || n <= 0)
       throw new TypeError('Second argument of .:@ must be a positive number')
     const dir = evaluate(args[2], env)
     if (dir !== -1 && dir !== 1)
       throw new TypeError('Third argument of .:@ must be either -1 or 1')
-     return array.rotate(n, dir)
+    return array.rotate(n, dir)
   },
   ['@']: (args, env) => {
     if (args.length !== 2)
@@ -403,11 +413,13 @@ const tokens = {
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of :. must be an .: []')
-    const index =  evaluate(args[1], env)
-    if (!Number.isInteger(index)) 
+    const index = evaluate(args[1], env)
+    if (!Number.isInteger(index))
       throw new TypeError('Second argument of :. must be a number')
     if (!array.isInBounds(Math.abs(index)))
-     throw new TypeError(`Index is out of bounds [${index}] <> .: [${array.length}]`)
+      throw new TypeError(
+        `Index is out of bounds [${index}] <> .: [${array.length}]`
+      )
     return array.at(index)
   },
   ['..:=']: (args, env) => {
@@ -416,11 +428,13 @@ const tokens = {
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of  ..:= must be an .: []')
-    const index =  evaluate(args[1], env)
-    if (!Number.isInteger(index)) 
+    const index = evaluate(args[1], env)
+    if (!Number.isInteger(index))
       throw new TypeError('Second argument of  ..:= must be a number')
     if (!array.isInBounds(Math.abs(index)))
-     throw new TypeError(`Index is out of bounds [${index}] <> .: [${array.length}]`)
+      throw new TypeError(
+        `Index is out of bounds [${index}] <> .: [${array.length}]`
+      )
     return array.set(index, evaluate(args[2], env))
   },
   // ['</>']: (args, env) => {
@@ -544,13 +558,10 @@ const tokens = {
     const toSpread = evaluate(first, env)
     if (typeof toSpread !== 'object' || Brrr.isBrrr(toSpread))
       throw new SyntaxError('::: can only be used on ::')
-    return  {
-          ...toSpread,
-          ...rest.reduce(
-            (acc, item) => ({ ...acc, ...evaluate(item, env) }),
-            {}
-          ),
-        }
+    return {
+      ...toSpread,
+      ...rest.reduce((acc, item) => ({ ...acc, ...evaluate(item, env) }), {}),
+    }
   },
   ['...']: (args, env) => {
     if (!args.length) throw new TypeError('Invalid number of arguments to ...')
@@ -558,8 +569,7 @@ const tokens = {
     const toSpread = evaluate(first, env)
     if (!Brrr.isBrrr(toSpread))
       throw new SyntaxError('... can only be used on .:')
-    return toSpread.merge(...rest.map((item) => evaluate(item, env)))
-   
+    return toSpread.merge(...rest.map(item => evaluate(item, env)))
   },
   ['.:=']: (args, env) => {
     if (args.length !== 2)
@@ -567,7 +577,7 @@ const tokens = {
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:= must be an .: []')
-    return  array.append(evaluate(args[1], env))
+    return array.append(evaluate(args[1], env))
   },
   [':.=']: (args, env) => {
     if (args.length !== 2)
@@ -575,7 +585,7 @@ const tokens = {
     const array = evaluate(args[0], env)
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:= must be an .: []')
-    return  array.prepend(evaluate(args[1], env))
+    return array.prepend(evaluate(args[1], env))
   },
   ['.:!=']: (args, env) => {
     if (args.length !== 1)
