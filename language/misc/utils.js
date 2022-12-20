@@ -34,6 +34,7 @@ const _head = (array) => array.head()
 const _tail = (array) => array.tail()
 const _cut = (array) => array.cut()
 const _chop= (array) => array.chop()
+const _slice= (array, n1, n2) => array.slice(n1, n2)
 const _length = (array) => array.length
 const _split = (string, separator) => Brrr.from(string.split(separator))
 const _at = (array, index) => array.at(index)

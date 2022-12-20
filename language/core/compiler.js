@@ -135,23 +135,29 @@ const dfs = (tree, locals) => {
       case '.<':
         return `_at(${dfs(tree.args[0], locals)}, -1);`
       case ':.':
-        return `_at(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`
+        return `_at(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       // case '</>':
       //   return `document.createElement(${dfs(tree.args[0], locals)})`
       case '.:':
         return 'Brrr.of(' + tree.args.map(x => dfs(x, locals)).join(',') + ')'
       case '..:=':
-        return `_set(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)}, ${dfs(tree.args[2], locals)});`
+        return `_set(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )}, ${dfs(tree.args[2], locals)});`
       case '.:=':
         return `_append(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )});`
-    case ':.=':
-      return `_prepend(${dfs(tree.args[0], locals)}, ${dfs(
-        tree.args[1],
-        locals
-      )});`
+      case ':.=':
+        return `_prepend(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       case '.:!=':
         return `_head(${dfs(tree.args[0], locals)});`
       case ':.!=':
@@ -181,7 +187,7 @@ const dfs = (tree, locals) => {
             }, '') +
           '}'
         )
-      case 'tco': 
+      case 'tco':
         return '_tco(' + dfs(tree.args[0], locals) + ');'
       case '...':
         return `_spreadArr([${tree.args.map(x => dfs(x, locals)).join(',')}]);`
@@ -192,32 +198,58 @@ const dfs = (tree, locals) => {
         return `_pipe(${rest.join(',')})(${param});`
       }
       case '>>.:': {
-        return `_qSort(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`
+        return `_qSort(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       }
       case '::.:': {
-        return `_mSort(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`
+        return `_mSort(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       }
-      case  '.::': {
-        return `_grp(${ dfs(tree.args[0], locals) }, ${ dfs(tree.args[1], locals) });`
+      case '.::': {
+        return `_grp(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       }
-      case  '.:@': {
-        return `_rot(${ dfs(tree.args[0], locals) }, ${ dfs(tree.args[1], locals) }, ${ dfs(tree.args[2], locals) });`
-      }
-      case '>>': {
-        return `_scanLeft(${ dfs(tree.args[0], locals)}, ${ dfs(tree.args[1], locals)});`
-      }
-      case '<<': {
-        return `_scanRight(${ dfs(tree.args[0], locals)}, ${ dfs(tree.args[1], locals)});`
-      }
-      case '>>.': {
-        return `_mapLeft(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`
-      }
-      case '.<<': {
-        return `_mapRight(${dfs(tree.args[0], locals)}, ${dfs(tree.args[1], locals)});`
-      }
-      case '>-': {
-        return `_filter(${dfs(tree.args[0], locals)}}, ${dfs(tree.args[1], locals)}});`
-      }
+      case '.:@':
+        return `_rot(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )}, ${dfs(tree.args[2], locals)});`
+      case '.:*':
+        return `_slice(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )}, ${dfs(tree.args[2], locals)});`
+      case '>>':
+        return `_scanLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
+      case '<<':
+        return `_scanRight(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
+      case '>>.':
+        return `_mapLeft(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
+      case '.<<':
+        return `_mapRight(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
+      case '>-':
+        return `_filter(${dfs(tree.args[0], locals)}}, ${dfs(
+          tree.args[1],
+          locals
+        )}});`
       case '>_': {
         const [array, callback, out] = tree.args.map(x => dfs(x, locals))
         return `_reduceLeft(${array}, ${callback}, ${out});`

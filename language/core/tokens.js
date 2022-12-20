@@ -146,10 +146,6 @@ const tokens = {
   },
   ['..']: (args, env) => {
     let value = VOID
-    if (args.length <= 1)
-      throw new RangeError(
-        'Using .. [] with less than 2 arguments is redundant'
-      )
     args.forEach(arg => (value = evaluate(arg, env)))
     return value
   },
@@ -333,6 +329,20 @@ const tokens = {
     if (dir !== -1 && dir !== 1)
       throw new TypeError('Third argument of .:@ must be either -1 or 1')
     return array.rotate(n, dir)
+  },
+  ['.:*']: (args, env) => {
+    if (args.length !== 3)
+      throw new TypeError('Invalid number of arguments to .:*')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of .:* must be an .: []')
+    const n1 = evaluate(args[1], env)
+    if (typeof n1 !== 'number')
+      throw new TypeError('Second argument of .:* must be a number')
+    const n2 = evaluate(args[2], env)
+    if (typeof n2 !== 'number')
+      throw new TypeError('Third argument of .:* must be a number')
+    return array.slice(n1, n2)
   },
   ['@']: (args, env) => {
     if (args.length !== 2)
