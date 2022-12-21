@@ -42,7 +42,7 @@
   .:= [y stack; y];
   = [x; next x];
   = [y; next y];
-  = [level; .:? [x stack]];
+  := [level; .:? [x stack]];
   = [angle; + [angle; * [theta; dir]]];
   = [length; * [length; step]];
 

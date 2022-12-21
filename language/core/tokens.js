@@ -323,12 +323,23 @@ const tokens = {
     if (!(array.constructor.name === 'Brrr'))
       throw new TypeError('First argument of .:@ must be an .: []')
     const n = evaluate(args[1], env)
-    if (typeof n !== 'number' || n <= 0)
+    if (typeof n !== 'number' || n < 0)
       throw new TypeError('Second argument of .:@ must be a positive number')
     const dir = evaluate(args[2], env)
     if (dir !== -1 && dir !== 1)
       throw new TypeError('Third argument of .:@ must be either -1 or 1')
     return array.rotate(n, dir)
+  },
+  ['_.']: (args, env) => {
+    if (args.length !== 2)
+      throw new TypeError('Invalid number of arguments to _.')
+    const array = evaluate(args[0], env)
+    if (!(array.constructor.name === 'Brrr'))
+      throw new TypeError('First argument of _. must be an .: []')
+    const level = evaluate(args[1], env)
+    if (typeof level !== 'number' || level < 0)
+      throw new TypeError('Second argument of _. must be a positive number')
+    return array.flat(level)
   },
   ['.:*']: (args, env) => {
     if (args.length !== 3)

@@ -207,15 +207,13 @@ describe('interpretation should work as expected', () => {
   })
   it('>>. and .<< should work', () => {
     deepEqual(
-      runFromInterpreted(
-        `>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
-      ).items,
+      runFromInterpreted(`>>. [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`)
+        .items,
       [2, 5, 8, 11]
     )
     deepEqual(
-      runFromInterpreted(
-        `.<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`
-      ).items,
+      runFromInterpreted(`.<< [.: [1; 2; 3; 4]; -> [x; i; a; + [i; * [x; 2]]]]`)
+        .items,
       [2, 5, 8, 11]
     )
   })
@@ -244,22 +242,45 @@ describe('interpretation should work as expected', () => {
       101
     )
   })
-  it('... and ::: shoud work', ()=> {
-    deepEqual(runFromInterpreted(`.: [
+  it('... and ::: shoud work', () => {
+    deepEqual(
+      runFromInterpreted(`.: [
       ... [.: [1; 2; 3]; .: [4; 5; 6]];
       ::: [:: ["x"; 10]; :: ["y"; 23]]
-      ]`).items, [[1, 2, 3, 4, 5, 6], { "x": 10, "y": 23 }])
+      ]`).items,
+      [[1, 2, 3, 4, 5, 6], { x: 10, y: 23 }]
+    )
   })
-  it ('::.: and >>.: should work', () => {
-    deepEqual(runFromInterpreted(` |> [
+  it('::.: and >>.: should work', () => {
+    deepEqual(
+      runFromInterpreted(` |> [
       .: [3; 4; 2; 1; 2; 3];
       ::.: [-> [a; b; ? [> [a; b]; -1; 1]]]
     ];
-    `).items, [4, 3, 3, 2, 2, 1])
-    deepEqual(runFromInterpreted(` |> [
+    `).items,
+      [4, 3, 3, 2, 2, 1]
+    )
+    deepEqual(
+      runFromInterpreted(` |> [
       .: [3; 4; 2; 1; 2; 3];
       >>.: [-1]
     ];
-    `).items, [4, 3, 3, 2, 2, 1])
+    `).items,
+      [4, 3, 3, 2, 2, 1]
+    )
+  })
+  it('.:@ should work', () => {
+    deepEqual(
+      runFromInterpreted(`
+      .:@ [.: [3; 4; 2; 1; 2; 3]; 2; -1]
+    `).items,
+      [2, 1, 2, 3, 3, 4]
+    )
+    deepEqual(
+      runFromInterpreted(`
+      .:@ [.: [3; 4; 2; 1; 2; 3]; 3; 1]
+    `).items,
+      [1, 2, 3, 3, 4, 2]
+    )
   })
 })

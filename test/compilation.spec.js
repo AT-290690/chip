@@ -186,7 +186,7 @@ describe('compilation should work as expected', () => {
       ]`
     deepEqual(runFromInterpreted(source), runFromCompiled(source))
   })
-  it ('::.: and >>.: should work', () => {
+  it('::.: and >>.: should work', () => {
     const source1 = ` |> [
       .: [3; 4; 2; 1; 2; 3];
       ::.: [-> [a; b; ? [> [a; b]; -1; 1]]]

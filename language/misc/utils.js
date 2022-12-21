@@ -33,8 +33,8 @@ const _prepemd = (array, value) => array.prepend(value)
 const _head = (array) => array.head()
 const _tail = (array) => array.tail()
 const _cut = (array) => array.cut()
-const _chop= (array) => array.chop()
-const _slice= (array, n1, n2) => array.slice(n1, n2)
+const _chop = (array) => array.chop()
+const _slice = (array, n1, n2) => array.slice(n1, n2)
 const _length = (array) => array.length
 const _split = (string, separator) => Brrr.from(string.split(separator))
 const _at = (array, index) => array.at(index)
@@ -43,20 +43,11 @@ const _mSort = (array, callback) => array.mergeSort(callback)
 const _qSort = (array, dir) => array.quickSort(dir)
 const _grp = (array, callback) => array.group(callback)
 const _rot = (array, n, dir) => array.rotate(n, dir)
+const _flat = (array, n) => array.flat(n)
 const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
-export const brrrHelpers = `/**  Helper functions */
-/** 
-  If Type(x) is different from Type(y), return false.
-  If Type(x) is Number, then
-  If x is NaN and y is NaN, return true.
-  If x is +0 and y is -0, return true.
-  If x is -0 and y is +0, return true.
-  If x is the same Number value as y, return true.
-  Return false.
-  Return SameValueNonNumber(x, y).
-*/
+export const brrrHelpers = `
 const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
 const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 const _isIterable = iter =>
