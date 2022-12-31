@@ -153,14 +153,14 @@ const dfs = (tree, locals) => {
           tree.args[1],
           locals
         )});`
-      case ':.=':
+      case '=.:':
         return `_prepend(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )});`
       case '.:!=':
         return `_head(${dfs(tree.args[0], locals)});`
-      case ':.!=':
+      case '!=.:':
         return `_tail(${dfs(tree.args[0], locals)});`
       case '|.':
         return `_cut(${dfs(tree.args[0], locals)});`
@@ -197,13 +197,13 @@ const dfs = (tree, locals) => {
         const [param, ...rest] = tree.args.map(x => dfs(x, locals))
         return `_pipe(${rest.join(',')})(${param});`
       }
-      case '>>.:': {
+      case '~::': {
         return `_qSort(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
         )});`
       }
-      case '::.:': {
+      case '*::': {
         return `_mSort(${dfs(tree.args[0], locals)}, ${dfs(
           tree.args[1],
           locals
