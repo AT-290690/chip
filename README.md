@@ -1,6 +1,8 @@
 # chip
 
 Build wep-apps that can be stored inside a link and shared for free.
+
+```
 ;; this is a comment
 ; separator
 1 2 3 4 5 6 7 8 9 0 3.14 ;; numbers
@@ -58,3 +60,4 @@ void ;; not defined
 >   > |:|
 >   > .>
 >   > .<
+```

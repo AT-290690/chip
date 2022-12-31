@@ -48,6 +48,18 @@ const call = (x, fn) => fn(x)
 const printout = (...args) => console.log(...args)
 const protolessModule = methods => { const env = Object.create(null); for (const method in methods) env[method] = methods[method]; return env };`
 export const brrrHelpers = `
+
+/**  Helper functions */
+/** 
+  If Type(x) is different from Type(y), return false.
+  If Type(x) is Number, then
+  If x is NaN and y is NaN, return true.
+  If x is +0 and y is -0, return true.
+  If x is -0 and y is +0, return true.
+  If x is the same Number value as y, return true.
+  Return false.
+  Return SameValueNonNumber(x, y).
+*/
 const _sameValueZero = (x, y) => x === y || (Number.isNaN(x) && Number.isNaN(y))
 const _clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 const _isIterable = iter =>
@@ -157,7 +169,7 @@ const _quickSortDesc = (items, left, right) => {
   return items
 }
 
-const merge = (left, right, callback) => {
+const _merge = (left, right, callback) => {
   const arr = []
   while (left.length && right.length) {
     callback(right.at(0), left.at(0)) > 0
@@ -173,7 +185,7 @@ const merge = (left, right, callback) => {
   }
   const out = new Brrr()
   const half = (arr.length / 2) | 0.5
-  for (let i = half - 1; i >= 0; i--) out.prepend(arr[i])
+  for (let i = half - 1; i >= 0; --i) out.prepend(arr[i])
   for (let i = half; i < arr.length; ++i) out.append(arr[i])
   return out
 }
@@ -184,7 +196,11 @@ const _mergeSort = (array, callback) => {
     return array
   }
   const left = array.splice(0, half)
-  return merge(_mergeSort(left, callback), _mergeSort(array, callback), callback)
+  return _merge(
+    _mergeSort(left, callback),
+    _mergeSort(array, callback),
+    callback
+  )
 }
 
 const _binarySearch = _tailCallOptimisedRecursion(
@@ -193,8 +209,8 @@ const _binarySearch = _tailCallOptimisedRecursion(
     const index = ((start + end) / 2) | 0.5
     const current = arr.get(index)
     if (current === undefined) return undefined
-    const _Identity = by(current)
-    if (_Identity === target) return current
+    const identity = by(current)
+    if (identity === target) return current
     if (greather(current))
       return _binarySearch(arr, target, by, greather, start, index - 1)
     else return _binarySearch(arr, target, by, greather, index + 1, end)
@@ -306,7 +322,7 @@ for (const method of Brrr.from([
   ...Object.getOwnPropertyNames(Brrr),
   ...Object.getOwnPropertyNames(Brrr.prototype),
 ]).without('prototype', 'isShortCircuited', 'constructor').items) {
-  _Shadow.prototype[method] = () => _Shadow
+  _Shadow.prototype[method] = () => _shadow
 }
 const _shadow = Object.freeze(new _Shadow())`
 export const logBoldMessage = msg => console.log('\x1b[1m', msg)
