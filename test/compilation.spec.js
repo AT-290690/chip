@@ -109,7 +109,11 @@ describe('compilation should work as expected', () => {
     equal(runFromInterpreted(source), runFromCompiled(source))
   })
   it('length of string', () => {
-    const source = `.:? [./: ["01010"]];`
+    const source = `.:? [.-: ["01010"; ""]];`
+    equal(runFromInterpreted(source), runFromCompiled(source))
+  })
+  it('split and join', () => {
+    const source = `.+:[.-: ["01010"; ""]; "-"];`
     equal(runFromInterpreted(source), runFromCompiled(source))
   })
   it('import should work', () => {

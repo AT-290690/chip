@@ -166,10 +166,16 @@ const dfs = (tree, locals) => {
         return `_cut(${dfs(tree.args[0], locals)});`
       case '.|':
         return `_chop(${dfs(tree.args[0], locals)});`
-      case './:':
-        return `_split(${dfs(tree.args[0], locals)}, ${
-          tree.args[1] ? dfs(tree.args[1], locals) : '""'
-        });`
+      case '.-:':
+        return `_split(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
+      case '.+:':
+        return `_join(${dfs(tree.args[0], locals)}, ${dfs(
+          tree.args[1],
+          locals
+        )});`
       case '.:?':
         return `_length(${dfs(tree.args[0], locals)});`
       case '::':
@@ -419,5 +425,5 @@ export const compileToJs = AST => {
     if (!semiColumnEdgeCases.has(current + next)) program += current
   }
   const top = vars.size ? `var ${[...vars].join(',')};` : ''
-  return { body: `${top}${program}`, modules }
+  return { top, program, modules }
 }

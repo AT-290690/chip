@@ -283,4 +283,18 @@ describe('interpretation should work as expected', () => {
       [1, 2, 3, 3, 4, 2]
     )
   })
+  it('.+: should work', () => {
+    equal(
+      runFromInterpreted(`
+      .+: [.: ["a"; "b"; "c"; "d"]; ""]
+    `),
+      'abcd'
+    )
+    equal(
+      runFromInterpreted(`
+      .+: [.: ["a"; "b"; "c"; "d"]; "-"]
+    `),
+      'a-b-c-d'
+    )
+  })
 })

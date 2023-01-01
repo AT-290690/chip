@@ -37,6 +37,7 @@ const _chop = (array) => array.chop()
 const _slice = (array, n1, n2) => array.slice(n1, n2)
 const _length = (array) => array.length
 const _split = (string, separator) => Brrr.from(string.split(separator))
+const _join = (arr, separator) => arr.join(separator)
 const _at = (array, index) => array.at(index)
 const _set = (array, index, value) => array.set(index, value)
 const _mSort = (array, callback) => array.mergeSort(callback)
@@ -422,19 +423,19 @@ export const treeShake = modules => {
 
 export const compileModule = source => {
   const inlined = wrapInBody(removeNoCode(source))
-  const { body, modules } = compileToJs(parse(inlined))
+  const { top, program, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
   return `const VOID = null;
 ${Brrr.toString()}
 ${brrrHelpers}
 ${languageUtilsString}
 ${lib};
-${body}`
+${top}${program}`
 }
 
 export const compileHtml = (source, scripts = '') => {
   const inlined = wrapInBody(removeNoCode(source))
-  const { body, modules } = compileToJs(parse(inlined))
+  const { top, program, modules } = compileToJs(parse(inlined))
   const lib = treeShake(modules)
   return `
 <style>body { background: #0e0e0e } </style><body>
@@ -446,7 +447,7 @@ const VOID = null;
 ${languageUtilsString}
 </script>
 <script>${lib}</script>
-<script> (() => { ${body} })()</script>
+<script> (() => { ${top}${program} })()</script>
 </body>`
 }
 
